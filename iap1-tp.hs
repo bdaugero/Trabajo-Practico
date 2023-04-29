@@ -1,7 +1,7 @@
 -- Completar con los datos del grupo
 --
--- Nombre de Grupo: xx
--- Integrante 1: Nombre Apellido, email, LU
+-- Nombre de Grupo: Algorritmo
+-- Integrante 1: Bautista D'Augero, bdaugero@gmail.com, 100/21
 -- Integrante 2: Nombre Apellido, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Nombre Apellido, email, LU
