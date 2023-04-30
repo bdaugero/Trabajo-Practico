@@ -9,13 +9,16 @@ type RedSocial = ([Usuario], [Relacion], [Publicacion])
 idDeUsuario :: Usuario -> Integer
 idDeUsuario (id, _) = id 
 
+noHayRelacionesRepetidas :: [Relacion] -> Bool
+noHayRelacionesRepetidas [(x)]  = [fst(x) /= sn()]
+
 nombreDeUsuario :: Usuario -> String
 nombreDeUsuario (_, nombre) = nombre 
 
-todosDistintos :: (Eq t) => [t] -> Bool
-todosDistintos [a] = True
-todosDistintos (x:xs) | x == head (xs) = False
-                      | otherwise = todosDistintos (xs)
+todosDistintos :: Eq a => [a] -> Bool
+todosDistintos [] = True
+todosDistintos (x:xs) = not (pertenece x xs) && todosDistintos xs
+
 
 largo :: (Eq t) => [t] -> Int
 largo [] = 0
@@ -45,9 +48,15 @@ soloElID [(x)] = [fst(x)]
 soloElID (x:xs) = fst(x) : soloElID xs
 
 
---no se si anda
 noHayIdRepetidos :: [Usuario] -> Bool
 noHayIdRepetidos us = todosDistintos (soloElID (us))
+
+usuariosValidos :: [Usuario] -> Bool
+usuariosValidos [] = True
+usuariosValidos (x:xs) | usuarioValido (x) == (noHayIdRepetidos (x:xs)) = usuariosValidos xs  
+                       | otherwise = False
+
+
 
 
 
