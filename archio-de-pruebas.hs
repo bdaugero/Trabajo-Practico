@@ -8,6 +8,7 @@ usuario4 = (4, "Mariela")
 usuario5 = (5, "Natalia")
 
 relacion1_2 = (usuario1, usuario2)
+relacion2_1 = (usuario2, usuario1)
 relacion1_3 = (usuario1, usuario3)
 relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los usuarios es indistinto
 relacion2_3 = (usuario3, usuario2)
@@ -54,25 +55,7 @@ type RedSocial = ([Usuario], [Relacion], [Publicacion])
 idDeUsuario :: Usuario -> Integer
 idDeUsuario (id, _) = id 
 
-perteneceLaRelacionALaListaDeUsuarios :: Relacion -> [Usuario] -> Bool
-perteneceLaRelacionALaListaDeUsuarios relacion (y:ys) = pertenece (fst relacion) (y:ys) && pertenece (snd relacion) (y:ys)
-
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios ::  [Relacion] -> [Usuario] -> Bool
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios (x:xs) (y:ys) | perteneceLaRelacionALaListaDeUsuarios x (y:ys) = estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios xs (y:ys)
-                                                              | otherwise = False
-
-sonTodasLasRelacionesDiferentes :: [Relacion] -> Bool
-sonTodasLasRelacionesDiferentes [] = True
-sonTodasLasRelacionesDiferentes (x:xs) | pertenece x (xs) = False
-                                       | otherwise = sonTodasLasRelacionesDiferentes xs
-
-usuariosDeRelacionValidos :: [Relacion] -> [Usuario] -> Bool
-usuariosDeRelacionValidos x y =  sonTodasLasRelacionesDiferentes x && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios x y
-
-
---noHayRelacionesRepetidas :: [Relacion] -> Bool
---noHayRelacionesRepetidas [(x)]  = [fst(x) /= sn()]
+--preludios de Usuario
 
 nombreDeUsuario :: Usuario -> String
 nombreDeUsuario (_, nombre) = nombre 
@@ -106,18 +89,59 @@ usuarioValido :: Usuario -> Bool
 usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
 
 -- Funcion que devuelve una lista con los id del Usuario
-soloElID :: [Usuario] -> [Integer]
-soloElID [(x)] = [fst(x)]
-soloElID (x:xs) = fst(x) : soloElID xs
+soloElIDUsuario :: [Usuario] -> [Integer]
+soloElIDUsuario [(x)] = [fst(x)]
+soloElIDUsuario (x:xs) = fst(x) : soloElIDUsuario xs
 
 
 noHayIdRepetidos :: [Usuario] -> Bool
-noHayIdRepetidos us = todosDistintos (soloElID (us))
+noHayIdRepetidos us = todosDistintos (soloElIDUsuario (us))
 
 usuariosValidos :: [Usuario] -> Bool
 usuariosValidos [] = True
 usuariosValidos (x:xs) | usuarioValido (x) == (noHayIdRepetidos (x:xs)) = usuariosValidos xs  
                        | otherwise = False
+
+--preludios de Relaciones
+
+perteneceLaRelacionALaListaDeUsuarios :: Relacion -> [Usuario] -> Bool
+perteneceLaRelacionALaListaDeUsuarios relacion (y:ys) = pertenece (fst relacion) (y:ys) && pertenece (snd relacion) (y:ys)
+
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios ::  [Relacion] -> [Usuario] -> Bool
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios (x:xs) (y:ys) | perteneceLaRelacionALaListaDeUsuarios x (y:ys) = estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios xs (y:ys)
+                                                              | otherwise = False
+
+sonTodasLasRelacionesDiferentes :: [Relacion] -> Bool
+sonTodasLasRelacionesDiferentes [] = True
+sonTodasLasRelacionesDiferentes (x:xs) | pertenece x (xs) = False
+                                       | otherwise = sonTodasLasRelacionesDiferentes xs
+
+usuariosDeRelacionValidos :: [Relacion] -> [Usuario] -> Bool
+usuariosDeRelacionValidos x y =  sonTodasLasRelacionesDiferentes x && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios x y
+
+darVueltaRelacion :: Relacion -> Relacion
+darVueltaRelacion (x, y) = (y, x)
+
+hayRelacionesSimetricas :: [Relacion] -> Bool
+hayRelacionesSimetricas (x:xs) = pertenece (darVueltaRelacion x) xs 
+
+relacionesAsimetricas :: [Relacion] -> Bool
+relacionesAsimetricas x = not (hayRelacionesSimetricas x)
+
+soloElIDRelaciones :: [Relacion] -> [(Integer, Integer)]
+soloElIDRelaciones [] = []
+soloElIDRelaciones (x:xs) = (fst (fst x), fst (snd x)) : [] ++ soloElIDRelaciones xs
+
+noHayRelacionesRepetidas :: [Relacion] -> Bool
+noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIDRelaciones (x:xs))
+
+relacionesValidas :: [Usuario] -> [Relacion] -> Bool
+relacionesValidas x y = (usuariosDeRelacionValidos y x) && (relacionesAsimetricas y) && (noHayRelacionesRepetidas y)
+
+--preludios de Publicacion
+
+
 
 
 
