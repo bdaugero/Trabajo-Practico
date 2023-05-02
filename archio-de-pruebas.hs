@@ -129,19 +129,39 @@ hayRelacionesSimetricas (x:xs) = pertenece (darVueltaRelacion x) xs
 relacionesAsimetricas :: [Relacion] -> Bool
 relacionesAsimetricas x = not (hayRelacionesSimetricas x)
 
-soloElIDRelaciones :: [Relacion] -> [(Integer, Integer)]
-soloElIDRelaciones [] = []
-soloElIDRelaciones (x:xs) = (fst (fst x), fst (snd x)) : [] ++ soloElIDRelaciones xs
+soloElIdRelaciones :: [Relacion] -> [(Integer, Integer)]
+soloElIdRelaciones [] = []
+soloElIdRelaciones (x:xs) = (fst (fst x), fst (snd x)) : [] ++ soloElIdRelaciones xs
 
 noHayRelacionesRepetidas :: [Relacion] -> Bool
-noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIDRelaciones (x:xs))
+noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIdRelaciones (x:xs))
 
 relacionesValidas :: [Usuario] -> [Relacion] -> Bool
 relacionesValidas x y = (usuariosDeRelacionValidos y x) && (relacionesAsimetricas y) && (noHayRelacionesRepetidas y)
 
+relaciones :: RedSocial -> [Relacion]
+relaciones (_, rs, _) = rs
+
+meter2UsuariosEnDupla :: Usuario -> Usuario -> (Usuario, Usuario)
+meter2UsuariosEnDupla u1 u2 = (u1, u2)
+
+relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
+relacionadosDirecto u1 u2 x = pertenece (meter2UsuariosEnDupla u1 u2) (relaciones x) || pertenece (meter2UsuariosEnDupla u2 u1) (relaciones x)
+ 
+cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
+cadenaDeAmigos [a] y =  --hay que arreglar el caso base, cuando quede 1 usuario tiene que ver si pertenece a las relaciones de la red social
+cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
+                        | otherwise = False
+
 --preludios de Publicacion
 
+--publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 
+sonDeLaRed :: RedSocial -> [Usuario] -> Bool
+sonDeLaRed x [] = True
+sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
+                    | otherwise = False
+                               
 
 
 
