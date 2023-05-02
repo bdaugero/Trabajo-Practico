@@ -13,7 +13,7 @@ relacion1_3 = (usuario1, usuario3)
 relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los usuarios es indistinto
 relacion2_3 = (usuario3, usuario2)
 relacion2_4 = (usuario2, usuario4)
-relacion3_4 = (usuario4, usuario3)
+relacion3_4 = (usuario3, usuario4)
 
 publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
 publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
@@ -112,13 +112,13 @@ estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
 estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios (x:xs) (y:ys) | perteneceLaRelacionALaListaDeUsuarios x (y:ys) = estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios xs (y:ys)
                                                               | otherwise = False
 
-sonTodasLasRelacionesDiferentes :: [Relacion] -> Bool
-sonTodasLasRelacionesDiferentes [] = True
-sonTodasLasRelacionesDiferentes (x:xs) | pertenece x (xs) = False
-                                       | otherwise = sonTodasLasRelacionesDiferentes xs
+noHayRelacionReflexiva :: [Relacion] -> Bool
+noHayRelacionReflexiva [] = True
+noHayRelacionReflexiva (x:xs) | fst x /= snd x = noHayRelacionReflexiva (xs)
+                              | otherwise = False
 
 usuariosDeRelacionValidos :: [Relacion] -> [Usuario] -> Bool
-usuariosDeRelacionValidos x y =  sonTodasLasRelacionesDiferentes x && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios x y
+usuariosDeRelacionValidos x y =  noHayRelacionReflexiva x && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios x y
 
 darVueltaRelacion :: Relacion -> Relacion
 darVueltaRelacion (x, y) = (y, x)
@@ -146,10 +146,10 @@ meter2UsuariosEnDupla :: Usuario -> Usuario -> (Usuario, Usuario)
 meter2UsuariosEnDupla u1 u2 = (u1, u2)
 
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadosDirecto u1 u2 x = pertenece (meter2UsuariosEnDupla u1 u2) (relaciones x) || pertenece (meter2UsuariosEnDupla u2 u1) (relaciones x)
+relacionadosDirecto u1 u2 x = pertenece (u1, u2) (relaciones x) || pertenece (u2, u1) (relaciones x)
  
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos [a] y =  --hay que arreglar el caso base, cuando quede 1 usuario tiene que ver si pertenece a las relaciones de la red social
+cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y  
 cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
                         | otherwise = False
 
