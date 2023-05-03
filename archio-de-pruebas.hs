@@ -154,6 +154,7 @@ cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs
                         | otherwise = False
 
 --preludios de Publicacion
+--UsuariosLikeValidos
 
 --publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 
