@@ -155,6 +155,19 @@ cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs
 
 --preludios de Publicacion
 
+-- Funcion del archivo iap1-tp --
+usuarioDePublicacion :: Publicacion -> Usuario
+usuarioDePublicacion (u, _, _) = u
+
+--publicacionesValidas
+
+usuariosDePublicacionSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
+usuariosDePublicacionSonUsuariosDeRed _ [] = True
+usuariosDePublicacionSonUsuariosDeRed x (y:ys) = pertenece (usuarioDePublicacion y) x && usuariosDePublicacionSonUsuariosDeRed x ys
+
+
+
+
 --publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
