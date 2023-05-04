@@ -153,12 +153,11 @@ cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y
 cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
                         | otherwise = False
 
---preludios de Publicacion
---UsuariosLikeValidos
-
 -- Funcion del archivo iap1-tp --
 usuarioDePublicacion :: Publicacion -> Usuario
 usuarioDePublicacion (u, _, _) = u
+
+--preludios de Publicacion
 
 publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHayPublicacionesRepetidas ps
