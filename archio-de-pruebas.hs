@@ -153,8 +153,31 @@ cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y
 cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
                         | otherwise = False
 
+
+-- Funcion del archivo iap1-tp --
+usuarioDePublicacion :: Publicacion -> Usuario
+usuarioDePublicacion (u, _, _) = u
+
 --preludios de Publicacion
---UsuariosLikeValidos
+
+publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
+publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHayPublicacionesRepetidas ps
+
+usuariosDePublicacionSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
+usuariosDePublicacionSonUsuariosDeRed _ [] = True
+usuariosDePublicacionSonUsuariosDeRed x (y:ys) = pertenece (usuarioDePublicacion y) x && usuariosDePublicacionSonUsuariosDeRed x ys
+
+noHayPublicacionesRepetidas :: [Publicacion] -> Bool
+noHayPublicacionesRepetidas (a:[]) = True
+noHayPublicacionesRepetidas (x:xs) = publicacionesDistintas x (head xs) && noHayPublicacionesRepetidas xs
+
+publicacionesDistintas :: Publicacion -> Publicacion -> Bool
+publicacionesDistintas x y | idDeUsuario (usuarioDePublicacion x) /= idDeUsuario (usuarioDePublicacion y) = True
+                           | textoDePublicacion x /= textoDePublicacion y = True
+                           | otherwise = False
+
+textoDePublicacion :: Publicacion -> String
+textoDePublicacion (_,tx,_) = tx
 
 --publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 
