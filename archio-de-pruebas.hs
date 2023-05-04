@@ -52,13 +52,38 @@ type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto p
 type RedSocial = ([Usuario], [Relacion], [Publicacion])
 
 
+-- Funciones basicas
+
+usuarios :: RedSocial -> [Usuario]
+usuarios (us, _, _) = us
+
+relaciones :: RedSocial -> [Relacion]
+relaciones (_, rs, _) = rs
+
+publicaciones :: RedSocial -> [Publicacion]
+publicaciones (_, _, ps) = ps
+
 idDeUsuario :: Usuario -> Integer
 idDeUsuario (id, _) = id 
 
---preludios de Usuario
-
 nombreDeUsuario :: Usuario -> String
 nombreDeUsuario (_, nombre) = nombre 
+
+usuarioDePublicacion :: Publicacion -> Usuario
+usuarioDePublicacion (u, _, _) = u
+
+likesDePublicacion :: Publicacion -> [Usuario]
+likesDePublicacion (_, _, us) = us
+
+
+
+--preludios de RedSocial
+
+
+redSocialValida :: RedSocial -> Bool
+redSocialValida x = usuariosValidos (usuarios x) && relacionesValidas (usuarios x) (relaciones x) && publicacionesValidas (usuarios x) (publicaciones x)
+
+--preludios de Usuario
 
 todosDistintos :: Eq a => [a] -> Bool
 todosDistintos [] = True
@@ -81,9 +106,6 @@ listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
 
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool
 mismosElementos ls1 ls2 = listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2 ls1
-
-usuarios :: RedSocial -> [Usuario]
-usuarios (us, _, _) = us
 
 usuarioValido :: Usuario -> Bool
 usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
@@ -139,9 +161,6 @@ noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIdRelaciones (x:xs))
 relacionesValidas :: [Usuario] -> [Relacion] -> Bool
 relacionesValidas x y = (usuariosDeRelacionValidos y x) && (relacionesAsimetricas y) && (noHayRelacionesRepetidas y)
 
-relaciones :: RedSocial -> [Relacion]
-relaciones (_, rs, _) = rs
-
 meter2UsuariosEnDupla :: Usuario -> Usuario -> (Usuario, Usuario)
 meter2UsuariosEnDupla u1 u2 = (u1, u2)
 
@@ -154,14 +173,10 @@ cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs
                         | otherwise = False
 
 
--- Funcion del archivo iap1-tp --
-usuarioDePublicacion :: Publicacion -> Usuario
-usuarioDePublicacion (u, _, _) = u
-
 --preludios de Publicacion
 
 publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
-publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHayPublicacionesRepetidas ps
+publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHayPublicacionesRepetidas ps && usuarioDeLikeDePublicacionesSonUsuariosDeRed us ps
 
 usuariosDePublicacionSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuariosDePublicacionSonUsuariosDeRed _ [] = True
@@ -179,7 +194,15 @@ publicacionesDistintas x y | idDeUsuario (usuarioDePublicacion x) /= idDeUsuario
 textoDePublicacion :: Publicacion -> String
 textoDePublicacion (_,tx,_) = tx
 
---publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
+usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
+usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
+usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | usuariosLikeValidos x (likesDePublicacion y) = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
+                                                      | otherwise = False
+
+usuariosLikeValidos :: [Usuario] -> [Usuario] -> Bool
+usuariosLikeValidos _ [] = True
+usuariosLikeValidos x (y:ys) | pertenece y x = usuariosLikeValidos x ys
+                             | otherwise = False
 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed x [] = True
