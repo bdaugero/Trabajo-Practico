@@ -46,6 +46,32 @@ redB = (usuariosB, relacionesB, publicacionesB)
 
 -- Intento de Ejercicio 1
 
+-- Funciones auxiliares para proyectarNombres
+soloNombresUsuarios :: [Usuario] -> [String]
+soloNombresUsuarios [(x)] = [snd(x)]
+soloNombresUsuarios (x:xs) = snd(x) : soloNombresUsuarios xs
+
+eliminarRepetidos :: (Eq t) => [t] -> [t]
+eliminarRepetidos [] = []
+eliminarRepetidos (x : xs) = x : eliminarRepetidos (quitarTodos x xs)
+
+quitarTodos :: (Eq t) => t -> [t] -> [t]
+quitarTodos _ [] = []
+quitarTodos x y | quitar x y == y = y
+                | otherwise = quitarTodos x (quitar x y)
+
+quitar :: (Eq t) => t -> [t] -> [t]
+quitar x (y : ys) | not (pertenece x (y : ys)) = (y : ys)
+                  | x == y = ys
+                  | otherwise = y : quitar x ys
+
+proyectarNombres :: [Usuario] -> [String]
+proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
+
+nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios x = proyectarNombres (usuarios x)
+
+
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
 type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
@@ -76,12 +102,25 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 
+--preludios auxiliares
 
---preludios de RedSocial
+pertenece :: (Eq t) => t -> [t] -> Bool
+pertenece _ [] = False
+pertenece n (x:xs) | n == x = True
+                   | otherwise = pertenece n (xs)
+
+mismosElementos :: (Eq t) => [t] -> [t] -> Bool
+mismosElementos ls1 ls2 = listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2 ls1
 
 
 redSocialValida :: RedSocial -> Bool
 redSocialValida x = usuariosValidos (usuarios x) && relacionesValidas (usuarios x) (relaciones x) && publicacionesValidas (usuarios x) (publicaciones x)
+
+
+listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
+listaPerteneceLista [] ls = True
+listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
+
 
 --preludios de Usuario
 
@@ -95,29 +134,17 @@ largo [] = 0
 largo (x:xs) = largo xs + 1
 
 
-pertenece :: (Eq t) => t -> [t] -> Bool
-pertenece _ [] = False
-pertenece n (x:xs) | n == x = True
-                   | otherwise = pertenece n (xs)
-
-listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
-listaPerteneceLista [] ls = True
-listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
-
-mismosElementos :: (Eq t) => [t] -> [t] -> Bool
-mismosElementos ls1 ls2 = listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2 ls1
-
 usuarioValido :: Usuario -> Bool
 usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
 
 -- Funcion que devuelve una lista con los id del Usuario
-soloElIDUsuario :: [Usuario] -> [Integer]
-soloElIDUsuario [(x)] = [fst(x)]
-soloElIDUsuario (x:xs) = fst(x) : soloElIDUsuario xs
+soloIdsUsuarios :: [Usuario] -> [Integer]
+soloIdsUsuarios [(x)] = [fst(x)]
+soloIdsUsuarios (x:xs) = fst(x) : soloIdsUsuarios xs
 
 
 noHayIdRepetidos :: [Usuario] -> Bool
-noHayIdRepetidos us = todosDistintos (soloElIDUsuario (us))
+noHayIdRepetidos us = todosDistintos (soloIdsUsuarios (us))
 
 usuariosValidos :: [Usuario] -> Bool
 usuariosValidos [] = True
@@ -196,51 +223,13 @@ textoDePublicacion (_,tx,_) = tx
 
 usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
-usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | usuariosLikeValidos x (likesDePublicacion y) = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
+usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | listaPerteneceLista (likesDePublicacion y) x = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
                                                       | otherwise = False
 
-usuariosLikeValidos :: [Usuario] -> [Usuario] -> Bool
-usuariosLikeValidos _ [] = True
-usuariosLikeValidos x (y:ys) | pertenece y x = usuariosLikeValidos x ys
-                             | otherwise = False
 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed x [] = True
 sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
                     | otherwise = False
                                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
