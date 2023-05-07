@@ -86,6 +86,9 @@ listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
 
 -- Intento Ejercicio 3
 
+cantidadDeAmigos :: RedSocial -> Usuario -> Integer
+cantidadDeAmigos r u = largo (amigosDe r u)
+
 
 
 type Usuario = (Integer, String) -- (id, nombre)
@@ -145,7 +148,7 @@ todosDistintos [] = True
 todosDistintos (x:xs) = not (pertenece x xs) && todosDistintos xs
 
 
-largo :: (Eq t) => [t] -> Int
+largo :: (Eq t) => [t] -> Integer
 largo [] = 0
 largo (x:xs) = largo xs + 1
 
