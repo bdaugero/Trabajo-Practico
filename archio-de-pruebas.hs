@@ -72,6 +72,22 @@ nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
 
+-- Intento Ejercicio 2
+
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe r u = listaAmistades (relaciones r) u
+
+listaAmistades :: [Relacion] -> Usuario -> [Usuario]
+listaAmistades [] u = []
+listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
+                        | snd x == u = (fst x) : listaAmistades xs u
+                        | otherwise = listaAmistades xs u
+
+
+-- Intento Ejercicio 3
+
+
+
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
 type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
