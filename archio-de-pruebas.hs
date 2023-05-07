@@ -68,9 +68,13 @@ quitar x (y : ys) | not (pertenece x (y : ys)) = (y : ys)
 proyectarNombres :: [Usuario] -> [String]
 proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
 
+--Ejercicio 1
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
+--Funciones auxiliares para ejercicio 2
+amigosDe :: RedSocial -> [String]
+amigosDe x | redSocialValida x =  proyectarNombres (usuarios x)
 
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
@@ -231,5 +235,17 @@ sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed x [] = True
 sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
                     | otherwise = False
+
+empiezaCon :: (Eq t) => t -> [t] -> Bool
+empiezaCon x [] = False
+empiezaCon x lista = x == head (lista)
+
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon x [] = False
+terminaCon x lista = x == ultimo lista 
+
+ultimo :: [t] -> t
+ultimo [a] = a
+ultimo (x:xs) = ultimo (xs)
                                
 
