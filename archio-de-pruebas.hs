@@ -68,20 +68,23 @@ quitar x (y : ys) | not (pertenece x (y : ys)) = (y : ys)
 proyectarNombres :: [Usuario] -> [String]
 proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
 
+--Ejercicio 1
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
-
--- Intento Ejercicio 2
-
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe r u = listaAmistades (relaciones r) u
+--Funciones auxiliares para ejercicio 2
 
 listaAmistades :: [Relacion] -> Usuario -> [Usuario]
 listaAmistades [] u = []
 listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
                         | snd x == u = (fst x) : listaAmistades xs u
                         | otherwise = listaAmistades xs u
+
+-- Intento Ejercicio 2
+
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe r u = listaAmistades (relaciones r) u
+
 
 
 -- Intento Ejercicio 3
@@ -250,5 +253,17 @@ sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed x [] = True
 sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
                     | otherwise = False
+
+empiezaCon :: (Eq t) => t -> [t] -> Bool
+empiezaCon x [] = False
+empiezaCon x lista = x == head (lista)
+
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon x [] = False
+terminaCon x lista = x == ultimo lista 
+
+ultimo :: [t] -> t
+ultimo [a] = a
+ultimo (x:xs) = ultimo (xs)
                                
 
