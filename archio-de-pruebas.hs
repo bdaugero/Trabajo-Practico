@@ -14,6 +14,7 @@ relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los 
 relacion2_3 = (usuario3, usuario2)
 relacion2_4 = (usuario2, usuario4)
 relacion3_4 = (usuario3, usuario4)
+relacion2_5 = (usuario2, usuario5)
 
 publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
 publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
@@ -72,27 +73,6 @@ proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
--- Intento Ejercicio 2
-
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe r u = listaAmistades (relaciones r) u
-
-listaAmistades :: [Relacion] -> Usuario -> [Usuario]
-listaAmistades [] u = []
-listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
-                        | snd x == u = (fst x) : listaAmistades xs u
-                        | otherwise = listaAmistades xs u
-
-
--- Intento Ejercicio 3
-
-cantidadDeAmigos :: RedSocial -> Usuario -> Integer
-cantidadDeAmigos r u = largo (amigosDe r u)
-
--- Intento Ejercicio 4
-
-estaRobertoCarlos :: RedSocial
-
 
 
 type Usuario = (Integer, String) -- (id, nombre)
@@ -125,7 +105,7 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 
---preludios auxiliares
+-- Preludios auxiliares
 
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
@@ -145,7 +125,28 @@ listaPerteneceLista [] ls = True
 listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
 
 
---preludios de Usuario
+sonDeLaRed :: RedSocial -> [Usuario] -> Bool
+sonDeLaRed x [] = True
+sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
+                    | otherwise = False
+
+
+empiezaCon :: (Eq t) => t -> [t] -> Bool
+empiezaCon x [] = False
+empiezaCon x lista = x == head (lista)
+
+
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon x [] = False
+terminaCon x lista = x == ultimo lista 
+
+
+ultimo :: [t] -> t
+ultimo [a] = a
+ultimo (x:xs) = ultimo (xs)
+                               
+
+-- Preludios de Usuario
 
 todosDistintos :: Eq a => [a] -> Bool
 todosDistintos [] = True
@@ -160,6 +161,7 @@ largo (x:xs) = largo xs + 1
 usuarioValido :: Usuario -> Bool
 usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
 
+
 -- Funcion que devuelve una lista con los id del Usuario
 soloIdsUsuarios :: [Usuario] -> [Integer]
 soloIdsUsuarios [(x)] = [fst(x)]
@@ -169,15 +171,18 @@ soloIdsUsuarios (x:xs) = fst(x) : soloIdsUsuarios xs
 noHayIdRepetidos :: [Usuario] -> Bool
 noHayIdRepetidos us = todosDistintos (soloIdsUsuarios (us))
 
+
 usuariosValidos :: [Usuario] -> Bool
 usuariosValidos [] = True
 usuariosValidos (x:xs) | usuarioValido (x) == (noHayIdRepetidos (x:xs)) = usuariosValidos xs  
                        | otherwise = False
 
---preludios de Relaciones
+
+-- Preludios de Relaciones
 
 perteneceLaRelacionALaListaDeUsuarios :: Relacion -> [Usuario] -> Bool
 perteneceLaRelacionALaListaDeUsuarios relacion (y:ys) = pertenece (fst relacion) (y:ys) && pertenece (snd relacion) (y:ys)
+
 
 estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios ::  [Relacion] -> [Usuario] -> Bool
 estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
@@ -195,27 +200,35 @@ usuariosDeRelacionValidos x y =  noHayRelacionReflexiva x && estanLosUsuariosDeL
 darVueltaRelacion :: Relacion -> Relacion
 darVueltaRelacion (x, y) = (y, x)
 
+
 hayRelacionesSimetricas :: [Relacion] -> Bool
 hayRelacionesSimetricas (x:xs) = pertenece (darVueltaRelacion x) xs 
 
+
 relacionesAsimetricas :: [Relacion] -> Bool
 relacionesAsimetricas x = not (hayRelacionesSimetricas x)
+
 
 soloElIdRelaciones :: [Relacion] -> [(Integer, Integer)]
 soloElIdRelaciones [] = []
 soloElIdRelaciones (x:xs) = (fst (fst x), fst (snd x)) : [] ++ soloElIdRelaciones xs
 
+
 noHayRelacionesRepetidas :: [Relacion] -> Bool
 noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIdRelaciones (x:xs))
+
 
 relacionesValidas :: [Usuario] -> [Relacion] -> Bool
 relacionesValidas x y = (usuariosDeRelacionValidos y x) && (relacionesAsimetricas y) && (noHayRelacionesRepetidas y)
 
+
 meter2UsuariosEnDupla :: Usuario -> Usuario -> (Usuario, Usuario)
 meter2UsuariosEnDupla u1 u2 = (u1, u2)
 
+
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 x = pertenece (u1, u2) (relaciones x) || pertenece (u2, u1) (relaciones x)
+ 
  
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y  
@@ -223,26 +236,31 @@ cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs
                         | otherwise = False
 
 
---preludios de Publicacion
+-- Preludios de Publicacion
 
 publicacionesValidas :: [Usuario] -> [Publicacion] -> Bool
 publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHayPublicacionesRepetidas ps && usuarioDeLikeDePublicacionesSonUsuariosDeRed us ps
+
 
 usuariosDePublicacionSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuariosDePublicacionSonUsuariosDeRed _ [] = True
 usuariosDePublicacionSonUsuariosDeRed x (y:ys) = pertenece (usuarioDePublicacion y) x && usuariosDePublicacionSonUsuariosDeRed x ys
 
+
 noHayPublicacionesRepetidas :: [Publicacion] -> Bool
 noHayPublicacionesRepetidas (a:[]) = True
 noHayPublicacionesRepetidas (x:xs) = publicacionesDistintas x (head xs) && noHayPublicacionesRepetidas xs
+
 
 publicacionesDistintas :: Publicacion -> Publicacion -> Bool
 publicacionesDistintas x y | idDeUsuario (usuarioDePublicacion x) /= idDeUsuario (usuarioDePublicacion y) = True
                            | textoDePublicacion x /= textoDePublicacion y = True
                            | otherwise = False
 
+
 textoDePublicacion :: Publicacion -> String
 textoDePublicacion (_,tx,_) = tx
+
 
 usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
@@ -250,21 +268,5 @@ usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | listaPerteneceLista (lik
                                                       | otherwise = False
 
 
-sonDeLaRed :: RedSocial -> [Usuario] -> Bool
-sonDeLaRed x [] = True
-sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
-                    | otherwise = False
 
-empiezaCon :: (Eq t) => t -> [t] -> Bool
-empiezaCon x [] = False
-empiezaCon x lista = x == head (lista)
-
-terminaCon :: (Eq t) => t -> [t] -> Bool
-terminaCon x [] = False
-terminaCon x lista = x == ultimo lista 
-
-ultimo :: [t] -> t
-ultimo [a] = a
-ultimo (x:xs) = ultimo (xs)
-                               
 
