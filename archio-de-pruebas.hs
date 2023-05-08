@@ -72,9 +72,28 @@ proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
---Funciones auxiliares para ejercicio 2
-amigosDe :: RedSocial -> [String]
-amigosDe x | redSocialValida x =  proyectarNombres (usuarios x)
+-- Intento Ejercicio 2
+
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe r u = listaAmistades (relaciones r) u
+
+listaAmistades :: [Relacion] -> Usuario -> [Usuario]
+listaAmistades [] u = []
+listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
+                        | snd x == u = (fst x) : listaAmistades xs u
+                        | otherwise = listaAmistades xs u
+
+
+-- Intento Ejercicio 3
+
+cantidadDeAmigos :: RedSocial -> Usuario -> Integer
+cantidadDeAmigos r u = largo (amigosDe r u)
+
+-- Intento Ejercicio 4
+
+estaRobertoCarlos :: RedSocial
+
+
 
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
@@ -133,7 +152,7 @@ todosDistintos [] = True
 todosDistintos (x:xs) = not (pertenece x xs) && todosDistintos xs
 
 
-largo :: (Eq t) => [t] -> Int
+largo :: (Eq t) => [t] -> Integer
 largo [] = 0
 largo (x:xs) = largo xs + 1
 
