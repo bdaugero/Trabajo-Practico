@@ -1,4 +1,3 @@
-
 -- Ejemplos
 
 usuario1 = (1, "Juan")
@@ -73,6 +72,51 @@ proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios x = proyectarNombres (usuarios x)
 
+
+-- Intento Ejercicio 2
+
+-- Funciones auxiliares para amigosDe
+listaAmistades :: [Relacion] -> Usuario -> [Usuario]
+listaAmistades [] u = []
+listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
+                        | snd x == u = (fst x) : listaAmistades xs u
+                        | otherwise = listaAmistades xs u
+
+-- Ejercicio 2
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe r u = listaAmistades (relaciones r) u
+
+
+
+-- Intento Ejercicio 3
+
+-- Ejercicio 3
+cantidadDeAmigos :: RedSocial -> Usuario -> Integer
+cantidadDeAmigos r u = largo (amigosDe r u)
+
+-- Intento Ejercicio 4
+
+-- Funciones auxiliares para usuarioConMasAmigos
+cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
+cantidadesDeAmigos r [] = []
+cantidadesDeAmigos r (x:xs) = cantidadDeAmigos r x : cantidadesDeAmigos r xs
+
+maximo :: [Integer] -> Integer
+maximo (x : xs) | xs == [] = x
+                | x >= (head xs) = maximo (x : (tail xs))
+                | x < (head xs) = maximo xs
+
+mayorCantidadDeAmigos :: RedSocial -> Integer
+mayorCantidadDeAmigos r = maximo (cantidadesDeAmigos r (usuarios r))
+
+usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
+usuarioConNAmigos r [x] = x
+usuarioConNAmigos r (x:xs) | mayorCantidadDeAmigos r == cantidadDeAmigos r x = x
+                           | otherwise = usuarioConNAmigos r xs
+
+-- Ejercicio 4
+usuarioConMasAmigos :: RedSocial -> Usuario
+usuarioConMasAmigos r = usuarioConNAmigos r (usuarios r)
 
 
 type Usuario = (Integer, String) -- (id, nombre)
@@ -266,7 +310,5 @@ usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bo
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | listaPerteneceLista (likesDePublicacion y) x = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
                                                       | otherwise = False
-
-
 
 
