@@ -4,7 +4,7 @@ usuario1 = (1, "Juan")
 usuario2 = (2, "Natalia")
 usuario3 = (3, "Pedro")
 usuario4 = (4, "Mariela")
-usuario5 = (5, "Natalia")
+usuario5 = (5, "Jose")
 
 relacion1_2 = (usuario1, usuario2)
 relacion2_1 = (usuario2, usuario1)
@@ -124,7 +124,7 @@ usuarioConMasAmigos r = usuarioConNAmigos r (usuarios r)
 
 --Intento de Ejercicio 5
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos red = (cantidadDeAmigos red (usuarioConMasAmigos red) > 10)
+estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 --Intento de Ejercicio 6
 
@@ -133,17 +133,56 @@ textoDePublicacion (_,tx,_) = tx
 
 
 
---publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-algo [] u = []
-algo (p:ps) u | u == (usuarioDePublicacion p) = (textoDePublicacion p) : algo (ps) u 
-              | otherwise = algo (ps) u 
+publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesDeAux [] u = []
+publicacionesDeAux (p:ps) u | u == (usuarioDePublicacion p) =  p : publicacionesDeAux (ps) u 
+                            | otherwise = publicacionesDeAux (ps) u 
 
---publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe red u = (algo (publicaciones red) u) 
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe red u = (publicacionesDeAux (publicaciones red) u) 
+
+-- Intento Ejercicio 7
+
+publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
+publicacionesQueLeGustanA red u = publicacionesQueLeGustanAAux (publicaciones red) u
+
+publicacionesQueLeGustanAAux :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesQueLeGustanAAux [] u = []
+publicacionesQueLeGustanAAux (p:ps) u |pertenece u (likesDePublicacion p) =  p : publicacionesQueLeGustanAAux (ps) u 
+                                      | otherwise = publicacionesQueLeGustanAAux (ps) u 
 
 
+-- Intento Ejercicio 8
+
+lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
+lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
+
+-- Intento Ejercicio 9
+
+tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
+tieneUnSeguidorFiel red u = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
 
 
+tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
+tieneUnSeguidorFielAux [] ls = False
+tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
+                                 | otherwise = tieneUnSeguidorFielAux us ls
+
+
+esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
+esSeguidorFiel u [] = True
+esSeguidorFiel u (l:ls) | pertenece u l = esSeguidorFiel u ls
+                        | otherwise = False
+
+
+listasDeLikesDeUsuario :: [Publicacion] -> [[Usuario]]
+listasDeLikesDeUsuario [] = []
+listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
+
+-- Intento Ejercicio 10
+existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
+existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
+    where us = usuarios red
 
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
@@ -299,7 +338,7 @@ meter2UsuariosEnDupla u1 u2 = (u1, u2)
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 x = pertenece (u1, u2) (relaciones x) || pertenece (u2, u1) (relaciones x)
  
- 
+-- El primer elemento de una relacion es el segundo de la relacion previa 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y  
 cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
