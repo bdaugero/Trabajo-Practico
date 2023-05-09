@@ -124,7 +124,7 @@ usuarioConMasAmigos r = usuarioConNAmigos r (usuarios r)
 
 --Intento de Ejercicio 5
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos red = (cantidadDeAmigos red (usuarioConMasAmigos red) > 10)
+estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 --Intento de Ejercicio 6
 
@@ -133,13 +133,13 @@ textoDePublicacion (_,tx,_) = tx
 
 
 
---publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-algo [] u = []
-algo (p:ps) u | u == (usuarioDePublicacion p) = (textoDePublicacion p) : algo (ps) u 
-              | otherwise = algo (ps) u 
+publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesDeAux [] u = []
+publicacionesDeAux (p:ps) u | u == (usuarioDePublicacion p) =  p : publicacionesDeAux (ps) u 
+                            | otherwise = publicacionesDeAux (ps) u 
 
---publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe red u = (algo (publicaciones red) u) 
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe red u = (publicacionesDeAux (publicaciones red) u) 
 
 
 
