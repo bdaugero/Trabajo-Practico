@@ -1,4 +1,3 @@
-
 -- Ejemplos
 
 usuario1 = (1, "Juan")
@@ -44,6 +43,10 @@ relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
 
+usuariosC = [usuario1, usuario2, usuario3, usuario5]
+relacionesC = [relacion1_2, relacion2_3, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2,relacion1_2, relacion1_2]
+publicacionesC = [publicacion3_3]
+redC = (usuariosC, relacionesC, publicacionesC)
 
 -- Intento de Ejercicio 1
 
@@ -118,6 +121,28 @@ usuarioConNAmigos r (x:xs) | mayorCantidadDeAmigos r == cantidadDeAmigos r x = x
 -- Ejercicio 4
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos r = usuarioConNAmigos r (usuarios r)
+
+--Intento de Ejercicio 5
+estaRobertoCarlos :: RedSocial -> Bool
+estaRobertoCarlos red = (cantidadDeAmigos red (usuarioConMasAmigos red) > 10)
+
+--Intento de Ejercicio 6
+
+textoDePublicacion :: Publicacion -> String
+textoDePublicacion (_,tx,_) = tx
+
+
+
+--publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+algo [] u = []
+algo (p:ps) u | u == (usuarioDePublicacion p) = (textoDePublicacion p) : algo (ps) u 
+              | otherwise = algo (ps) u 
+
+--publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe red u = (algo (publicaciones red) u) 
+
+
+
 
 
 type Usuario = (Integer, String) -- (id, nombre)
@@ -303,15 +328,12 @@ publicacionesDistintas x y | idDeUsuario (usuarioDePublicacion x) /= idDeUsuario
                            | otherwise = False
 
 
-textoDePublicacion :: Publicacion -> String
-textoDePublicacion (_,tx,_) = tx
+
 
 
 usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
 usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | listaPerteneceLista (likesDePublicacion y) x = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
                                                       | otherwise = False
-
-
 
 
