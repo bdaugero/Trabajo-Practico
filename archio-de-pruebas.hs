@@ -26,7 +26,7 @@ publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
 
 publicacion3_1 = (usuario3, "Lorem Ipsum", [])
 publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
-publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario4])
+publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
 
 publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
 publicacion4_2 = (usuario4, "I am Bob", [])
