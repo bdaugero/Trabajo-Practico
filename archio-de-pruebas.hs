@@ -48,100 +48,102 @@ relacionesC = [relacion1_2, relacion2_3, relacion1_2, relacion1_2, relacion1_2, 
 publicacionesC = [publicacion3_3]
 redC = (usuariosC, relacionesC, publicacionesC)
 
--- Intento de Ejercicio 1
+type Usuario = (Integer, String) -- (id, nombre)
+type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
+type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
+type RedSocial = ([Usuario], [Relacion], [Publicacion])
+
+
+
+-- Ejercicio 1
+
+nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios red = proyectarNombres (usuarios red)
+
+proyectarNombres :: [Usuario] -> [String]
+proyectarNombres us = eliminarRepetidos (soloNombresUsuarios us)
 
 -- Funciones auxiliares para proyectarNombres
 soloNombresUsuarios :: [Usuario] -> [String]
-soloNombresUsuarios [(x)] = [snd(x)]
-soloNombresUsuarios (x:xs) = snd(x) : soloNombresUsuarios xs
+soloNombresUsuarios [u] = [snd u]
+soloNombresUsuarios (u:us) = snd(u) : soloNombresUsuarios us
 
 eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
-eliminarRepetidos (x : xs) = x : eliminarRepetidos (quitarTodos x xs)
+eliminarRepetidos (x:xs) = x : eliminarRepetidos (quitarTodos x xs)
 
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos _ [] = []
-quitarTodos x y | quitar x y == y = y
-                | otherwise = quitarTodos x (quitar x y)
+quitarTodos x ls | quitar x ls == ls = ls
+                 | otherwise = quitarTodos x (quitar x ls)
 
 quitar :: (Eq t) => t -> [t] -> [t]
-quitar x (y : ys) | not (pertenece x (y : ys)) = (y : ys)
-                  | x == y = ys
-                  | otherwise = y : quitar x ys
+quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
+                | n == x = xs
+                | otherwise = x : quitar n xs
 
-proyectarNombres :: [Usuario] -> [String]
-proyectarNombres x = eliminarRepetidos (soloNombresUsuarios x)
-
---Ejercicio 1
-nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios x = proyectarNombres (usuarios x)
-
-
--- Intento Ejercicio 2
-
--- Funciones auxiliares para amigosDe
-listaAmistades :: [Relacion] -> Usuario -> [Usuario]
-listaAmistades [] u = []
-listaAmistades (x:xs) u | fst x == u = (snd x) : listaAmistades xs u
-                        | snd x == u = (fst x) : listaAmistades xs u
-                        | otherwise = listaAmistades xs u
 
 -- Ejercicio 2
+
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe r u = listaAmistades (relaciones r) u
+amigosDe red u = listaAmistades (relaciones red) u
 
+listaAmistades :: [Relacion] -> Usuario -> [Usuario]
+listaAmistades [] u = []
+listaAmistades (r:rs) u | fst r == u = (snd r) : listaAmistades rs u
+                        | snd r == u = (fst r) : listaAmistades rs u
+                        | otherwise = listaAmistades rs u
 
-
--- Intento Ejercicio 3
 
 -- Ejercicio 3
+
 cantidadDeAmigos :: RedSocial -> Usuario -> Integer
-cantidadDeAmigos r u = largo (amigosDe r u)
+cantidadDeAmigos red u = largo (amigosDe red u)
 
--- Intento Ejercicio 4
-
--- Funciones auxiliares para usuarioConMasAmigos
-cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
-cantidadesDeAmigos r [] = []
-cantidadesDeAmigos r (x:xs) = cantidadDeAmigos r x : cantidadesDeAmigos r xs
-
-maximo :: [Integer] -> Integer
-maximo (x : xs) | xs == [] = x
-                | x >= (head xs) = maximo (x : (tail xs))
-                | x < (head xs) = maximo xs
-
-mayorCantidadDeAmigos :: RedSocial -> Integer
-mayorCantidadDeAmigos r = maximo (cantidadesDeAmigos r (usuarios r))
-
-usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
-usuarioConNAmigos r [x] = x
-usuarioConNAmigos r (x:xs) | mayorCantidadDeAmigos r == cantidadDeAmigos r x = x
-                           | otherwise = usuarioConNAmigos r xs
 
 -- Ejercicio 4
-usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos r = usuarioConNAmigos r (usuarios r)
 
---Intento de Ejercicio 5
+usuarioConMasAmigos :: RedSocial -> Usuario
+usuarioConMasAmigos red = usuarioConNAmigos red (usuarios red)
+
+-- Funciones auxiliares para usuarioConMasAmigos
+usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
+usuarioConNAmigos red [u] = u
+usuarioConNAmigos red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigos red u = u
+                           | otherwise = usuarioConNAmigos red us
+
+mayorCantidadDeAmigos :: RedSocial -> Integer
+mayorCantidadDeAmigos red = maximo (cantidadesDeAmigos red (usuarios red))
+
+cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
+cantidadesDeAmigos red [] = []
+cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red us
+
+maximo :: [Integer] -> Integer
+maximo (x:xs) | xs == [] = x
+              | x >= head xs = maximo (x : (tail xs))
+              | x < head xs = maximo xs
+
+
+-- Ejercicio 5
+
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
---Intento de Ejercicio 6
 
-textoDePublicacion :: Publicacion -> String
-textoDePublicacion (_,tx,_) = tx
+-- Ejercicio 6
 
-
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe red u = (publicacionesDeAux (publicaciones red) u)
 
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
 publicacionesDeAux (p:ps) u | u == (usuarioDePublicacion p) =  p : publicacionesDeAux (ps) u 
                             | otherwise = publicacionesDeAux (ps) u 
 
-publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe red u = (publicacionesDeAux (publicaciones red) u) 
+ 
 
--- Intento Ejercicio 7
+-- Ejercicio 7
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = publicacionesQueLeGustanAAux (publicaciones red) u
@@ -152,45 +154,40 @@ publicacionesQueLeGustanAAux (p:ps) u |pertenece u (likesDePublicacion p) =  p :
                                       | otherwise = publicacionesQueLeGustanAAux (ps) u 
 
 
--- Intento Ejercicio 8
+-- Ejercicio 8
 
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
--- Intento Ejercicio 9
+
+-- Ejercicio 9
 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
-
 
 tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
 tieneUnSeguidorFielAux [] ls = False
 tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
                                  | otherwise = tieneUnSeguidorFielAux us ls
 
-
 esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
 esSeguidorFiel u [] = True
 esSeguidorFiel u (l:ls) | pertenece u l = esSeguidorFiel u ls
                         | otherwise = False
 
-
 listasDeLikesDeUsuario :: [Publicacion] -> [[Usuario]]
 listasDeLikesDeUsuario [] = []
 listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
 
--- Intento Ejercicio 10
+
+-- Ejercicio 10
+
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
     where us = usuarios red
 
-type Usuario = (Integer, String) -- (id, nombre)
-type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
-type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
-type RedSocial = ([Usuario], [Relacion], [Publicacion])
 
-
--- Funciones basicas
+-- Funciones básicas
 
 usuarios :: RedSocial -> [Usuario]
 usuarios (us, _, _) = us
@@ -214,135 +211,130 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 
--- Preludios auxiliares
+-- Predicados auxiliares
 
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
 pertenece n (x:xs) | n == x = True
                    | otherwise = pertenece n (xs)
 
+
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool
 mismosElementos ls1 ls2 = listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2 ls1
 
 
-redSocialValida :: RedSocial -> Bool
-redSocialValida x = usuariosValidos (usuarios x) && relacionesValidas (usuarios x) (relaciones x) && publicacionesValidas (usuarios x) (publicaciones x)
+--El primer elemento de una relacion es el segundo de la relacion previa 
+cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
+cadenaDeAmigos (a:b:[]) red = relacionadosDirecto a b red  
+cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos (us) red
+                          | otherwise = False
 
 
-listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
-listaPerteneceLista [] ls = True
-listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
-
-
-sonDeLaRed :: RedSocial -> [Usuario] -> Bool
-sonDeLaRed x [] = True
-sonDeLaRed x (y:ys) | pertenece y (usuarios x) = sonDeLaRed x (ys)
-                    | otherwise = False
+relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
+relacionadosDirecto u1 u2 red = pertenece (u1, u2) (relaciones red) || pertenece (u2, u1) (relaciones red)
 
 
 empiezaCon :: (Eq t) => t -> [t] -> Bool
 empiezaCon x [] = False
-empiezaCon x lista = x == head (lista)
+empiezaCon x ls = x == head ls
 
 
 terminaCon :: (Eq t) => t -> [t] -> Bool
 terminaCon x [] = False
-terminaCon x lista = x == ultimo lista 
-
+terminaCon x ls = x == ultimo ls
 
 ultimo :: [t] -> t
 ultimo [a] = a
-ultimo (x:xs) = ultimo (xs)
-                               
+ultimo (x:xs) = ultimo xs
+
+
+
+--Los siguientes predicados no están siendo utilizados por lo cual, no los necesitamos (consultar)
+-- Preludios de Red Social
+
+redSocialValida :: RedSocial -> Bool
+redSocialValida red = usuariosValidos (usuarios red) && relacionesValidas (usuarios red) (relaciones red) && publicacionesValidas (usuarios red) (publicaciones red)
+
+
+sonDeLaRed :: RedSocial -> [Usuario] -> Bool
+sonDeLaRed red [] = True
+sonDeLaRed red (u:us) | pertenece u (usuarios red) = sonDeLaRed red us
+                      | otherwise = False
+
+
 
 -- Preludios de Usuario
 
-todosDistintos :: Eq a => [a] -> Bool
-todosDistintos [] = True
-todosDistintos (x:xs) = not (pertenece x xs) && todosDistintos xs
+usuariosValidos :: [Usuario] -> Bool
+usuariosValidos [] = True
+usuariosValidos (u:us) | usuarioValido u == noHayIdRepetidos (u:us) = usuariosValidos us  
+                       | otherwise = False
 
+
+usuarioValido :: Usuario -> Bool
+usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
 
 largo :: (Eq t) => [t] -> Integer
 largo [] = 0
 largo (x:xs) = largo xs + 1
 
 
-usuarioValido :: Usuario -> Bool
-usuarioValido u = (idDeUsuario u) > 0 &&  (largo (nombreDeUsuario u) > 0)
-
-
--- Funcion que devuelve una lista con los id del Usuario
-soloIdsUsuarios :: [Usuario] -> [Integer]
-soloIdsUsuarios [(x)] = [fst(x)]
-soloIdsUsuarios (x:xs) = fst(x) : soloIdsUsuarios xs
-
-
 noHayIdRepetidos :: [Usuario] -> Bool
-noHayIdRepetidos us = todosDistintos (soloIdsUsuarios (us))
+noHayIdRepetidos us = todosDistintos (soloIdsUsuarios us)
 
 
-usuariosValidos :: [Usuario] -> Bool
-usuariosValidos [] = True
-usuariosValidos (x:xs) | usuarioValido (x) == (noHayIdRepetidos (x:xs)) = usuariosValidos xs  
-                       | otherwise = False
+--Función que devuelve una lista con los id del Usuario
+soloIdsUsuarios :: [Usuario] -> [Integer]
+soloIdsUsuarios [u] = [fst u]
+soloIdsUsuarios (u:us) = fst u : soloIdsUsuarios us
+
+
+todosDistintos :: (Eq t) => [t] -> Bool
+todosDistintos [] = True
+todosDistintos (x:xs) = not (pertenece x xs) && todosDistintos xs
+
 
 
 -- Preludios de Relaciones
 
-perteneceLaRelacionALaListaDeUsuarios :: Relacion -> [Usuario] -> Bool
-perteneceLaRelacionALaListaDeUsuarios relacion (y:ys) = pertenece (fst relacion) (y:ys) && pertenece (snd relacion) (y:ys)
+relacionesValidas :: [Usuario] -> [Relacion] -> Bool
+relacionesValidas us rs = (usuariosDeRelacionValidos rs us) && (relacionesAsimetricas rs) && (noHayRelacionesRepetidas rs)
 
 
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios ::  [Relacion] -> [Usuario] -> Bool
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
-estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios (x:xs) (y:ys) | perteneceLaRelacionALaListaDeUsuarios x (y:ys) = estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios xs (y:ys)
-                                                              | otherwise = False
+usuariosDeRelacionValidos :: [Relacion] -> [Usuario] -> Bool
+usuariosDeRelacionValidos rs us =  noHayRelacionReflexiva rs && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios rs us
 
 noHayRelacionReflexiva :: [Relacion] -> Bool
 noHayRelacionReflexiva [] = True
-noHayRelacionReflexiva (x:xs) | fst x /= snd x = noHayRelacionReflexiva (xs)
+noHayRelacionReflexiva (r:rs) | fst r /= snd r = noHayRelacionReflexiva (rs)
                               | otherwise = False
 
-usuariosDeRelacionValidos :: [Relacion] -> [Usuario] -> Bool
-usuariosDeRelacionValidos x y =  noHayRelacionReflexiva x && estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios x y
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios ::  [Relacion] -> [Usuario] -> Bool
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios [] _ = True
+estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios (r:rs) (u:us) | perteneceLaRelacionALaListaDeUsuarios r (u:us) = estanLosUsuariosDeLaRelacionEnLaListaDeUsuarios rs (u:us)
+                                                              | otherwise = False
 
-darVueltaRelacion :: Relacion -> Relacion
-darVueltaRelacion (x, y) = (y, x)
-
-
-hayRelacionesSimetricas :: [Relacion] -> Bool
-hayRelacionesSimetricas (x:xs) = pertenece (darVueltaRelacion x) xs 
+perteneceLaRelacionALaListaDeUsuarios :: Relacion -> [Usuario] -> Bool
+perteneceLaRelacionALaListaDeUsuarios r (u:us) = pertenece (fst r) (u:us) && pertenece (snd r) (u:us)
 
 
 relacionesAsimetricas :: [Relacion] -> Bool
-relacionesAsimetricas x = not (hayRelacionesSimetricas x)
+relacionesAsimetricas rs = not (hayRelacionesSimetricas rs)
 
+hayRelacionesSimetricas :: [Relacion] -> Bool
+hayRelacionesSimetricas (r:rs) = pertenece (darVueltaRelacion r) rs
 
-soloElIdRelaciones :: [Relacion] -> [(Integer, Integer)]
-soloElIdRelaciones [] = []
-soloElIdRelaciones (x:xs) = (fst (fst x), fst (snd x)) : [] ++ soloElIdRelaciones xs
+darVueltaRelacion :: Relacion -> Relacion
+darVueltaRelacion (r1, r2) = (r2, r1)
 
 
 noHayRelacionesRepetidas :: [Relacion] -> Bool
-noHayRelacionesRepetidas (x:xs) = todosDistintos (soloElIdRelaciones (x:xs))
+noHayRelacionesRepetidas (r:rs) = todosDistintos (soloElIdRelaciones (r:rs))
 
+soloElIdRelaciones :: [Relacion] -> [(Integer, Integer)]
+soloElIdRelaciones [] = []
+soloElIdRelaciones (r:rs) = (fst (fst r), fst (snd r)) : [] ++ soloElIdRelaciones rs
 
-relacionesValidas :: [Usuario] -> [Relacion] -> Bool
-relacionesValidas x y = (usuariosDeRelacionValidos y x) && (relacionesAsimetricas y) && (noHayRelacionesRepetidas y)
-
-
-meter2UsuariosEnDupla :: Usuario -> Usuario -> (Usuario, Usuario)
-meter2UsuariosEnDupla u1 u2 = (u1, u2)
-
-
-relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadosDirecto u1 u2 x = pertenece (u1, u2) (relaciones x) || pertenece (u2, u1) (relaciones x)
- 
--- El primer elemento de una relacion es el segundo de la relacion previa 
-cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos (a:b:[]) y = relacionadosDirecto a b y  
-cadenaDeAmigos (x:xs) y | relacionadosDirecto x (head xs) y = cadenaDeAmigos (xs) y
-                        | otherwise = False
 
 
 -- Preludios de Publicacion
@@ -353,26 +345,28 @@ publicacionesValidas us ps = usuariosDePublicacionSonUsuariosDeRed us ps && noHa
 
 usuariosDePublicacionSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
 usuariosDePublicacionSonUsuariosDeRed _ [] = True
-usuariosDePublicacionSonUsuariosDeRed x (y:ys) = pertenece (usuarioDePublicacion y) x && usuariosDePublicacionSonUsuariosDeRed x ys
+usuariosDePublicacionSonUsuariosDeRed us (p:ps) = pertenece (usuarioDePublicacion p) us && usuariosDePublicacionSonUsuariosDeRed us ps
 
 
 noHayPublicacionesRepetidas :: [Publicacion] -> Bool
 noHayPublicacionesRepetidas (a:[]) = True
-noHayPublicacionesRepetidas (x:xs) = publicacionesDistintas x (head xs) && noHayPublicacionesRepetidas xs
+noHayPublicacionesRepetidas (p:ps) = publicacionesDistintas p (head ps) && noHayPublicacionesRepetidas ps
 
 
 publicacionesDistintas :: Publicacion -> Publicacion -> Bool
-publicacionesDistintas x y | idDeUsuario (usuarioDePublicacion x) /= idDeUsuario (usuarioDePublicacion y) = True
-                           | textoDePublicacion x /= textoDePublicacion y = True
-                           | otherwise = False
+publicacionesDistintas p1 p2 | idDeUsuario (usuarioDePublicacion p1) /= idDeUsuario (usuarioDePublicacion p2) = True
+                             | textoDePublicacion p1 /= textoDePublicacion p2 = True
+                             | otherwise = False
 
-
-
+textoDePublicacion :: Publicacion -> String
+textoDePublicacion (_,tx,_) = tx
 
 
 usuarioDeLikeDePublicacionesSonUsuariosDeRed :: [Usuario] -> [Publicacion] -> Bool
-usuarioDeLikeDePublicacionesSonUsuariosDeRed x [] = True
-usuarioDeLikeDePublicacionesSonUsuariosDeRed x (y:ys) | listaPerteneceLista (likesDePublicacion y) x = usuarioDeLikeDePublicacionesSonUsuariosDeRed x ys
-                                                      | otherwise = False
+usuarioDeLikeDePublicacionesSonUsuariosDeRed us [] = True
+usuarioDeLikeDePublicacionesSonUsuariosDeRed us (p:ps) | listaPerteneceLista (likesDePublicacion p) us = usuarioDeLikeDePublicacionesSonUsuariosDeRed us ps
+                                                       | otherwise = False
 
-
+listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
+listaPerteneceLista [] ls = True
+listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
