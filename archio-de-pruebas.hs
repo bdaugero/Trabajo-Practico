@@ -57,6 +57,11 @@ type RedSocial = ([Usuario], [Relacion], [Publicacion])
 
 -- Ejercicio 1
 
+{-
+nombresDeUsuarios de una red social toma los usuarios de la red y devuelve únicamente el conjunto de nombres, es decir, 
+elimina los repetidos de esa lista que solo contiene a los nombres obtenida con soloNombresUsuarios.
+-}
+
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red = proyectarNombres (usuarios red)
 
@@ -64,18 +69,34 @@ proyectarNombres :: [Usuario] -> [String]
 proyectarNombres us = eliminarRepetidos (soloNombresUsuarios us)
 
 -- Funciones auxiliares para proyectarNombres
+
+{-
+soloNombresUsuarios va tomando la segunda coordenada de cada primer elemento de la lista de usuarios, es decir
+el nombre, haciendo recursión con el resto de la lista hasta llegar al último usuario y así obtener la lista de nombres.
+-}
+
 soloNombresUsuarios :: [Usuario] -> [String]
 soloNombresUsuarios [u] = [snd u]
 soloNombresUsuarios (u:us) = snd(u) : soloNombresUsuarios us
+
+{-
+
+-}
 
 eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
 eliminarRepetidos (x:xs) = x : eliminarRepetidos (quitarTodos x xs)
 
+
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos _ [] = []
 quitarTodos x ls | quitar x ls == ls = ls
                  | otherwise = quitarTodos x (quitar x ls)
+
+{-
+quitar es una función que quita la primera aparición de un elemento en una lista de elementos de su mismo tipo, entonces si
+ese elemento no es igual al head y pertenece a la lista, lo agrega y recursa sobre el tail de la lista.
+-}
 
 quitar :: (Eq t) => t -> [t] -> [t]
 quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
@@ -85,8 +106,20 @@ quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
 
 -- Ejercicio 2
 
+{-
+amigosDe toma como función auxiliar listaAmistades, a la cual se le pasa como primer parámetro la lista de relaciones
+de la red social.
+-}
+
+
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe red u = listaAmistades (relaciones red) u
+
+{-
+listaAmistades chequea si en la primera relación de la lista, el usuario ingresado es igual al usuario de la primera o
+segunda tupla de la relación (en cuyo caso, son amigos) y agrega el segundo o el primer usuario respectivamente, luego
+recursa sobre el tail hasta llegar a la lista vacía.
+-}
 
 listaAmistades :: [Relacion] -> Usuario -> [Usuario]
 listaAmistades [] u = []
@@ -97,16 +130,26 @@ listaAmistades (r:rs) u | fst r == u = (snd r) : listaAmistades rs u
 
 -- Ejercicio 3
 
+{-
+cantidadDeAmigos dada una red y un usuario, devuelve la cantidad de amigos de dicho usuario entendiendo que dicha cantidad
+será igual a la longitud que tiene la lista de amigos del usuario (que es otra forma de contarlos).
+-}
+
 cantidadDeAmigos :: RedSocial -> Usuario -> Integer
 cantidadDeAmigos red u = largo (amigosDe red u)
 
 
 -- Ejercicio 4
 
+{-
+
+-}
+
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red = usuarioConNAmigos red (usuarios red)
 
 -- Funciones auxiliares para usuarioConMasAmigos
+
 usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
 usuarioConNAmigos red [u] = u
 usuarioConNAmigos red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigos red u = u
@@ -115,9 +158,16 @@ usuarioConNAmigos red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigos red
 mayorCantidadDeAmigos :: RedSocial -> Integer
 mayorCantidadDeAmigos red = maximo (cantidadesDeAmigos red (usuarios red))
 
+
 cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
 cantidadesDeAmigos red [] = []
 cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red us
+
+{-
+maximo de una lista de enteros va comparando los elementos de la lista uno a uno, descartando al menor de ellos y
+recursando sobre el tail de la lista hasta que queda un elemento (cuyo tail es la lista vacía) y devuelve dicho elemento, 
+que será el máximo.
+-}
 
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
