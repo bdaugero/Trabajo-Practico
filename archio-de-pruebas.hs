@@ -63,6 +63,7 @@ elimina los repetidos de esa lista que solo contiene a los nombres obtenida con 
 -}
 
 nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios ([],[],[]) = []
 nombresDeUsuarios red = proyectarNombres (usuarios red)
 
 proyectarNombres :: [Usuario] -> [String]
