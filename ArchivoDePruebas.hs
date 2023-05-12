@@ -50,7 +50,7 @@ relacionesC = [relacion1_2, relacion2_3, relacion1_2, relacion1_2, relacion1_2, 
 publicacionesC = [publicacion3_3]
 redC = (usuariosC, relacionesC, publicacionesC)
 
-redVacia = ([],[],[])
+--redVacia = ([],[],[])
 
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
