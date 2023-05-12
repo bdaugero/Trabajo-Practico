@@ -119,7 +119,7 @@ de la red social.
 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe ([],[],[]) _ = []
-amigosDe red u = listaAmistades (relaciones red) u
+amigosDe red u = eliminarRepetidos (listaAmistades (relaciones red) u)
 
 {-
 listaAmistades chequea si en la primera relación de la lista, el usuario ingresado es igual al usuario de la primera o
