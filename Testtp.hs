@@ -1,7 +1,7 @@
 module Testtp where
 
 import Test.HUnit
-import Tp1
+import ArchivoDePruebas
 
 -- Casos de Test
 

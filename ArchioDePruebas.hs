@@ -1,3 +1,5 @@
+module ArchivoDePruebas where
+
 -- Ejemplos
 
 usuario1 = (1, "Juan")
