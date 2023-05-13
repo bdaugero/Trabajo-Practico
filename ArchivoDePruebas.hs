@@ -1,61 +1,39 @@
 module ArchivoDePruebas where
 
--- Ejemplos
+-- Nombre de Grupo: Algorritmo
+-- Integrante 1: Bautista D'Augero, bdaugero@gmail.com, 100/21
+-- Integrante 2: Nombre Apellido, email, LU
+-- Integrante 3: Nombre Apellido, email, LU
+-- Integrante 4: Nombre Apellido, email, LU
 
-usuario1 = (1, "Juan")
-usuario2 = (2, "Natalia")
-usuario3 = (3, "Pedro")
-usuario4 = (4, "Mariela")
-usuario5 = (5, "Jose")
-
-relacion1_2 = (usuario1, usuario2)
-relacion2_1 = (usuario2, usuario1)
-relacion1_3 = (usuario1, usuario3)
-relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los usuarios es indistinto
-relacion2_3 = (usuario3, usuario2)
-relacion2_4 = (usuario2, usuario4)
-relacion3_4 = (usuario3, usuario4)
-relacion2_5 = (usuario2, usuario5)
-
-publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
-publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
-publicacion1_3 = (usuario1, "Este es mi tercer post", [usuario2, usuario5])
-publicacion1_4 = (usuario1, "Este es mi cuarto post", [])
-publicacion1_5 = (usuario1, "Este es como mi quinto post", [usuario5])
-
-publicacion2_1 = (usuario2, "Hello World", [usuario4])
-publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
-
-publicacion3_1 = (usuario3, "Lorem Ipsum", [])
-publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
-publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
-
-publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
-publicacion4_2 = (usuario4, "I am Bob", [])
-publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
-
-
-usuariosA = [usuario1, usuario2, usuario3, usuario4]
-relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
-publicacionesA = [publicacion1_1, publicacion1_2, publicacion2_1, publicacion2_2, publicacion3_1, publicacion3_2, publicacion4_1, publicacion4_2]
-redA = (usuariosA, relacionesA, publicacionesA)
-
-usuariosB = [usuario1, usuario2, usuario3, usuario5]
-relacionesB = [relacion1_2, relacion2_3]
-publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
-redB = (usuariosB, relacionesB, publicacionesB)
-
-usuariosC = [usuario1, usuario2, usuario3, usuario5]
-relacionesC = [relacion1_2, relacion2_3, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2, relacion1_2,relacion1_2, relacion1_2]
-publicacionesC = [publicacion3_3]
-redC = (usuariosC, relacionesC, publicacionesC)
-
---redVacia = ([],[],[])
-
+--Definiciones de tipos
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
 type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
 type RedSocial = ([Usuario], [Relacion], [Publicacion])
+
+-- Funciones básicas
+
+usuarios :: RedSocial -> [Usuario]
+usuarios (us, _, _) = us
+
+relaciones :: RedSocial -> [Relacion]
+relaciones (_, rs, _) = rs
+
+publicaciones :: RedSocial -> [Publicacion]
+publicaciones (_, _, ps) = ps
+
+idDeUsuario :: Usuario -> Integer
+idDeUsuario (id, _) = id 
+
+nombreDeUsuario :: Usuario -> String
+nombreDeUsuario (_, nombre) = nombre 
+
+usuarioDePublicacion :: Publicacion -> Usuario
+usuarioDePublicacion (u, _, _) = u
+
+likesDePublicacion :: Publicacion -> [Usuario]
+likesDePublicacion (_, _, us) = us
 
 
 
@@ -69,6 +47,7 @@ elimina los repetidos de esa lista que solo contiene a los nombres obtenida con 
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios ([],[],[]) = []
 nombresDeUsuarios red = proyectarNombres (usuarios red)
+
 
 proyectarNombres :: [Usuario] -> [String]
 proyectarNombres us = eliminarRepetidos (soloNombresUsuarios us)
@@ -84,9 +63,6 @@ soloNombresUsuarios :: [Usuario] -> [String]
 soloNombresUsuarios [u] = [snd u]
 soloNombresUsuarios (u:us) = snd(u) : soloNombresUsuarios us
 
-{-
-
--}
 
 eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
@@ -98,10 +74,6 @@ quitarTodos _ [] = []
 quitarTodos x ls | quitar x ls == ls = ls
                  | otherwise = quitarTodos x (quitar x ls)
 
-{-
-quitar es una función que quita la primera aparición de un elemento en una lista de elementos de su mismo tipo, entonces si
-ese elemento no es igual al head y pertenece a la lista, lo agrega y recursa sobre el tail de la lista.
--}
 
 quitar :: (Eq t) => t -> [t] -> [t]
 quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
@@ -115,7 +87,6 @@ quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
 amigosDe toma como función auxiliar listaAmistades, a la cual se le pasa como primer parámetro la lista de relaciones
 de la red social.
 -}
-
 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe ([],[],[]) _ = []
@@ -147,30 +118,44 @@ cantidadDeAmigos red u = largo (amigosDe red u)
 
 
 -- Ejercicio 4
--- El caso de la red vacia no se si tiene sentido en este ejercicio ya que si la red es vacia no existe un usuario con mas amigos
+
+{-
+usuarioConMasAmigos es la evaluación de usuarioConMasAmigosAux en la lista de usuarios de la red.
+-}
+
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red = usuarioConNAmigos red (usuarios red)
 
 -- Funciones auxiliares para usuarioConMasAmigos
 
+{-
+usuarioConNamigos va recorriendo la lista de usuarios de la red hasta encontrar el usuario que coincide con la cantidad
+de amigos máxima de la red.
+-}
+
+-- ¿les parece cambiar el nombre de UsuarioConNAmigos por usuarioConMasAmigosAux? porque devuelve el usuario con mas amigos
+--lo de N creo que confunde porque ademas no está n en la función... despues díganme
+
+--y me surgió una duda, ¿si hay dos o más usuarios que tienen iguales cantidades máximas de amigos que debería devolver
+--la función?
+
 usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
 usuarioConNAmigos red [u] = u
 usuarioConNAmigos red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigos red u = u
-                           | otherwise = usuarioConNAmigos red us
+                             | otherwise = usuarioConNAmigos red us
+
 
 mayorCantidadDeAmigos :: RedSocial -> Integer
 mayorCantidadDeAmigos red = maximo (cantidadesDeAmigos red (usuarios red))
 
+{-
+cantidadesDeAmigos va creando una lista con la cantidad de amigos que tiene cada usuario de la lista de usuarios.
+-}
 
 cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
 cantidadesDeAmigos red [] = []
 cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red us
 
-{-
-maximo de una lista de enteros va comparando los elementos de la lista uno a uno, descartando al menor de ellos y
-recursando sobre el tail de la lista hasta que queda un elemento (cuyo tail es la lista vacía) y devuelve dicho elemento, 
-que será el máximo.
--}
 
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
@@ -245,29 +230,6 @@ existeSecuenciaDeAmigos ([],[],[]) _ _ = False
 existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
     where us = usuarios red
 
-
--- Funciones básicas
-
-usuarios :: RedSocial -> [Usuario]
-usuarios (us, _, _) = us
-
-relaciones :: RedSocial -> [Relacion]
-relaciones (_, rs, _) = rs
-
-publicaciones :: RedSocial -> [Publicacion]
-publicaciones (_, _, ps) = ps
-
-idDeUsuario :: Usuario -> Integer
-idDeUsuario (id, _) = id 
-
-nombreDeUsuario :: Usuario -> String
-nombreDeUsuario (_, nombre) = nombre 
-
-usuarioDePublicacion :: Publicacion -> Usuario
-usuarioDePublicacion (u, _, _) = u
-
-likesDePublicacion :: Publicacion -> [Usuario]
-likesDePublicacion (_, _, us) = us
 
 
 -- Predicados auxiliares
