@@ -1,3 +1,5 @@
+module ArchivoDePruebas where
+
 -- Ejemplos
 
 usuario1 = (1, "Juan")
@@ -48,6 +50,8 @@ relacionesC = [relacion1_2, relacion2_3, relacion1_2, relacion1_2, relacion1_2, 
 publicacionesC = [publicacion3_3]
 redC = (usuariosC, relacionesC, publicacionesC)
 
+--redVacia = ([],[],[])
+
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
 type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
@@ -63,6 +67,7 @@ elimina los repetidos de esa lista que solo contiene a los nombres obtenida con 
 -}
 
 nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios ([],[],[]) = []
 nombresDeUsuarios red = proyectarNombres (usuarios red)
 
 proyectarNombres :: [Usuario] -> [String]
@@ -113,7 +118,8 @@ de la red social.
 
 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe red u = listaAmistades (relaciones red) u
+amigosDe ([],[],[]) _ = []
+amigosDe red u = eliminarRepetidos (listaAmistades (relaciones red) u)
 
 {-
 listaAmistades chequea si en la primera relación de la lista, el usuario ingresado es igual al usuario de la primera o
@@ -136,15 +142,12 @@ será igual a la longitud que tiene la lista de amigos del usuario (que es otra 
 -}
 
 cantidadDeAmigos :: RedSocial -> Usuario -> Integer
+cantidadDeAmigos ([],[],[]) _ = 0
 cantidadDeAmigos red u = largo (amigosDe red u)
 
 
 -- Ejercicio 4
-
-{-
-
--}
-
+-- El caso de la red vacia no se si tiene sentido en este ejercicio ya que si la red es vacia no existe un usuario con mas amigos
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red = usuarioConNAmigos red (usuarios red)
 
@@ -178,12 +181,14 @@ maximo (x:xs) | xs == [] = x
 -- Ejercicio 5
 
 estaRobertoCarlos :: RedSocial -> Bool
+estaRobertoCarlos ([],[],[]) = False
 estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 
 -- Ejercicio 6
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe ([],[],[]) _ = []
 publicacionesDe red u = (publicacionesDeAux (publicaciones red) u)
 
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
@@ -196,6 +201,7 @@ publicacionesDeAux (p:ps) u | u == (usuarioDePublicacion p) =  p : publicaciones
 -- Ejercicio 7
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
+publicacionesQueLeGustanA ([],[],[]) _ = []
 publicacionesQueLeGustanA red u = publicacionesQueLeGustanAAux (publicaciones red) u
 
 publicacionesQueLeGustanAAux :: [Publicacion] -> Usuario -> [Publicacion]
@@ -207,12 +213,14 @@ publicacionesQueLeGustanAAux (p:ps) u |pertenece u (likesDePublicacion p) =  p :
 -- Ejercicio 8
 
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
+lesGustanLasMismasPublicaciones ([],[],[]) _ _ = False
 lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
 
 -- Ejercicio 9
 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
+tieneUnSeguidorFiel ([],[],[]) _ = False
 tieneUnSeguidorFiel red u = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
 
 tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
@@ -233,6 +241,7 @@ listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
 -- Ejercicio 10
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
+existeSecuenciaDeAmigos ([],[],[]) _ _ = False
 existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
     where us = usuarios red
 
