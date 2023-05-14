@@ -41,7 +41,7 @@ likesDePublicacion (_, _, us) = us
 
 {-
 nombresDeUsuarios de una red social toma los usuarios de la red y devuelve únicamente el conjunto de nombres, es decir, 
-elimina los repetidos de esa lista que solo contiene a los nombres obtenida con soloNombresUsuarios.
+elimina los repetidos de la lista que solo contiene a los nombres obtenida con soloNombresUsuarios.
 -}
 
 nombresDeUsuarios :: RedSocial -> [String]
@@ -56,12 +56,13 @@ proyectarNombres us = eliminarRepetidos (soloNombresUsuarios us)
 
 {-
 soloNombresUsuarios va tomando la segunda coordenada de cada primer elemento de la lista de usuarios, es decir
-el nombre, haciendo recursión con el resto de la lista hasta llegar al último usuario y así obtener la lista de nombres.
+el nombre, haciendo recursión con el resto de la lista hasta llegar al último usuario y así obtener la lista de nombres
+(admite repetidos).
 -}
 
 soloNombresUsuarios :: [Usuario] -> [String]
-soloNombresUsuarios [u] = [snd u]
-soloNombresUsuarios (u:us) = snd(u) : soloNombresUsuarios us
+soloNombresUsuarios [u] = snd u
+soloNombresUsuarios (u:us) = snd u : soloNombresUsuarios us
 
 
 eliminarRepetidos :: (Eq t) => [t] -> [t]
@@ -100,8 +101,8 @@ recursa sobre el tail hasta llegar a la lista vacía.
 
 listaAmistades :: [Relacion] -> Usuario -> [Usuario]
 listaAmistades [] u = []
-listaAmistades (r:rs) u | fst r == u = (snd r) : listaAmistades rs u
-                        | snd r == u = (fst r) : listaAmistades rs u
+listaAmistades (r:rs) u | fst r == u = snd r : listaAmistades rs u
+                        | snd r == u = fst r : listaAmistades rs u
                         | otherwise = listaAmistades rs u
 
 
@@ -129,15 +130,12 @@ usuarioConMasAmigos red = usuarioConNAmigos red (usuarios red)
 -- Funciones auxiliares para usuarioConMasAmigos
 
 {-
-usuarioConNamigos va recorriendo la lista de usuarios de la red hasta encontrar el usuario que coincide con la cantidad
+usuarioConNamigos va recorriendo la lista de usuarios de la red hasta encontrar un usuario que coincide con la cantidad
 de amigos máxima de la red.
 -}
 
 -- ¿les parece cambiar el nombre de UsuarioConNAmigos por usuarioConMasAmigosAux? porque devuelve el usuario con mas amigos
 --lo de N creo que confunde porque ademas no está n en la función... despues díganme
-
---y me surgió una duda, ¿si hay dos o más usuarios que tienen iguales cantidades máximas de amigos que debería devolver
---la función?
 
 usuarioConNAmigos :: RedSocial -> [Usuario] -> Usuario
 usuarioConNAmigos red [u] = u
@@ -159,11 +157,15 @@ cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red 
 
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
-              | x >= head xs = maximo (x : (tail xs))
+              | x >= head xs = maximo (x : tail xs)
               | x < head xs = maximo xs
 
 
 -- Ejercicio 5
+
+{-
+estaRobertoCarlos chequea si existe algún usuario de la red que tenga más de 10 amigos. 
+-}
 
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos ([],[],[]) = False
@@ -174,25 +176,36 @@ estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe ([],[],[]) _ = []
-publicacionesDe red u = (publicacionesDeAux (publicaciones red) u)
+publicacionesDe red u = eliminarRepetidos (publicacionesDeAux (publicaciones red) u)
+
+{-
+publicacionesDeAux va creando una lista con las publicaciones del usuario de entrada chequeando en cada publicación de la
+lista si ese usuario es igual al usuario de la publicación (en cuyo caso, el la publicó). Si no lo es, no la agrega y 
+continúa con el siguiente. 
+-}
 
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
-publicacionesDeAux (p:ps) u | u == (usuarioDePublicacion p) =  p : publicacionesDeAux (ps) u 
-                            | otherwise = publicacionesDeAux (ps) u 
+publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeAux ps u 
+                            | otherwise = publicacionesDeAux ps u 
 
- 
 
 -- Ejercicio 7
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA ([],[],[]) _ = []
-publicacionesQueLeGustanA red u = publicacionesQueLeGustanAAux (publicaciones red) u
+publicacionesQueLeGustanA red u = eliminarRepetidos (publicacionesQueLeGustanAaux (publicaciones red) u)
 
-publicacionesQueLeGustanAAux :: [Publicacion] -> Usuario -> [Publicacion]
-publicacionesQueLeGustanAAux [] u = []
-publicacionesQueLeGustanAAux (p:ps) u |pertenece u (likesDePublicacion p) =  p : publicacionesQueLeGustanAAux (ps) u 
-                                      | otherwise = publicacionesQueLeGustanAAux (ps) u 
+{-
+publicacionesQueLeGustanAaux se pregunta si el usuario ingresado es un elemento de la lista de likes de cada publicación 
+de la lista, si lo es agrega la publicación a una lista y sigue con el resto. Si no lo es, entonces no es una publicación
+que le guste (por lo tanto no la agrega) y se pregunta por el siguiente.  
+-}
+
+publicacionesQueLeGustanAaux :: [Publicacion] -> Usuario -> [Publicacion]
+publicacionesQueLeGustanAaux [] u = []
+publicacionesQueLeGustanAaux (p:ps) u |pertenece u (likesDePublicacion p) =  p : publicacionesQueLeGustanAaux ps u 
+                                      | otherwise = publicacionesQueLeGustanAaux ps u 
 
 
 -- Ejercicio 8
@@ -237,7 +250,7 @@ existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
 pertenece n (x:xs) | n == x = True
-                   | otherwise = pertenece n (xs)
+                   | otherwise = pertenece n xs
 
 
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool
@@ -247,7 +260,7 @@ mismosElementos ls1 ls2 = listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2
 --El primer elemento de una relacion es el segundo de la relacion previa 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (a:b:[]) red = relacionadosDirecto a b red  
-cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos (us) red
+cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos us red
                           | otherwise = False
 
 
