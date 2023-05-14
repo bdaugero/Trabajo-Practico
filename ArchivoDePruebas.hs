@@ -61,7 +61,7 @@ el nombre, haciendo recursión con el resto de la lista hasta llegar al último 
 -}
 
 soloNombresUsuarios :: [Usuario] -> [String]
-soloNombresUsuarios [u] = snd u
+soloNombresUsuarios [u] = [snd u]
 soloNombresUsuarios (u:us) = snd u : soloNombresUsuarios us
 
 
