@@ -41,3 +41,7 @@ testSuiteEjercicio2 = test [
 
     "Caso 6: Red con Usuarios con una relacion repetida" ~: (amigosDe redTest6 usuario1) ~?= [usuario2]
         ] 
+
+testSuiteEjercicio3 = test [
+    "Caso 1: Red vacía" ~: (cantidadDeAmigos redVacia) ~?= []
+        ]
