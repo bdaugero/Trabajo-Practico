@@ -3,6 +3,21 @@ module Testtp where
 import Test.HUnit
 import ArchivoDePruebas
 
+-- Usuarios
+usuario1 = (1, "Juan")
+usuario2 = (2, "Natalia")
+usuario3 = (3, "Pedro")
+usuario4 = (4, "Mariela")
+usuario5 = (5, "Natalia")
+
+-- Relaciones
+relacion1_2 = (usuario1, usuario2)
+relacion1_3 = (usuario1, usuario3)
+relacion1_4 = (usuario4, usuario1) 
+relacion2_3 = (usuario3, usuario2)
+relacion2_4 = (usuario2, usuario4)
+relacion3_4 = (usuario4, usuario3)
+
 -- Casos de Test Ejercicio 1
 redTest2 = ([usuario1], [], [])
 redTest3 = ([usuario1, usuario1, usuario2], [], [])
@@ -16,7 +31,7 @@ redTest6 = ([usuario1, usuario2], [relacion1_2, relacion1_2], [])
 redVacia = ([], [], [])
 
 
-run = runTestTT testSuiteEjercicio2
+run = runTestTT testSuiteEjercicio4
 
 testSuiteEjercicio1 = test [
     "Caso 1: Red vacía" ~: (nombresDeUsuarios redVacia) ~?= [],
@@ -43,5 +58,35 @@ testSuiteEjercicio2 = test [
         ] 
 
 testSuiteEjercicio3 = test [
-    "Caso 1: Red vacía" ~: (cantidadDeAmigos redVacia) ~?= []
+    "Caso 1: Red vacía" ~: (cantidadDeAmigos redVacia usuario1) ~?= 0
         ]
+
+testSuiteEjercicio4 = test [
+    "Caso 1: Usuario con 1 amigo" ~: (usuarioConMasAmigos redTest5) ~?= usuario1
+        ]
+{-
+testSuiteEjercicio5 = test [
+    "Caso 1: Red vacía" ~: (estaRobertoCarlos redVacia) ~?= []
+        ]
+
+testSuiteEjercicio6 = test [
+    "Caso 1: Red vacía" ~: (publicacionesDe redVacia) ~?= []
+        ]
+
+testSuiteEjercicio7 = test [
+    "Caso 1: Red vacía" ~: (publicacionesQueLeGustanA redVacia) ~?= []
+        ]
+
+testSuiteEjercicio8 = test [
+    "Caso 1: Red vacía" ~: (lesGustanLasMismasPublicaciones redVacia) ~?= []
+        ]
+
+testSuiteEjercicio9 = test [
+    "Caso 1: Red vacía" ~: (tieneUnSeguidorFiel redVacia) ~?= []
+        ]
+
+testSuiteEjercicio10 = test [
+    "Caso 1: Red vacía" ~: (existeSecuenciaDeAmigos redVacia) ~?= []
+        ]
+
+-}
