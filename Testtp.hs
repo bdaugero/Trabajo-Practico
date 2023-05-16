@@ -3,6 +3,18 @@ module Testtp where
 import Test.HUnit
 import ArchivoDePruebas
 
+run1 = runTestTT testSuiteEjercicio1
+run2 = runTestTT testSuiteEjercicio2
+run3 = runTestTT testSuiteEjercicio3
+run4 = runTestTT testSuiteEjercicio4
+run5 = runTestTT testSuiteEjercicio5
+run6 = runTestTT testSuiteEjercicio6
+run7 = runTestTT testSuiteEjercicio7
+run8 = runTestTT testSuiteEjercicio8
+run9 = runTestTT testSuiteEjercicio9
+run10 = runTestTT testSuiteEjercicio10
+
+
 -- Usuarios
 usuario1 = (1, "Juan")
 usuario2 = (2, "Natalia")
@@ -12,16 +24,34 @@ usuario5 = (5, "Natalia")
 usuario6 = (6, "Bautista")
 usuario7 = (7, "Tomas")
 usuario8 = (8, "Jorge")
-usuario9 = (9, "Antonela")
+usuario9 = (9, "Antonella")
 usuario10 = (10, "Julieta")
+usuario11 = (11, "Carla")
+usuario12 = (12, "Ramiro")
 
 -- Relaciones
 relacion1_2 = (usuario1, usuario2)
 relacion1_3 = (usuario1, usuario3)
-relacion1_4 = (usuario4, usuario1) 
-relacion2_3 = (usuario3, usuario2)
+relacion1_4 = (usuario1, usuario4)
+relacion1_5 = (usuario1, usuario5)
+relacion1_6 = (usuario1, usuario6)
+relacion1_7 = (usuario1, usuario7)
+relacion1_8 = (usuario1, usuario8)
+relacion1_9 = (usuario1, usuario9)
+relacion1_10 = (usuario1, usuario10)
+relacion1_11 = (usuario1, usuario11)
+relacion1_12 = (usuario1, usuario12)
+relacion2_3 = (usuario2, usuario3)
 relacion2_4 = (usuario2, usuario4)
-relacion3_4 = (usuario4, usuario3)
+relacion2_5 = (usuario2, usuario5)
+relacion2_6 = (usuario2, usuario6)
+relacion2_7 = (usuario2, usuario7)
+relacion2_8 = (usuario2, usuario8)
+relacion2_9 = (usuario2, usuario9)
+relacion2_10 = (usuario2, usuario10)
+relacion2_11 = (usuario2, usuario11)
+relacion2_12= (usuario2, usuario12)
+relacion3_4 = (usuario3, usuario4)
 
 
 -- Publicaciones
@@ -69,74 +99,106 @@ publicacion10_3 = (usuario10, "Estoy tan emocionado por la boda de mi mejor amig
 -- Redes
 redVacia = ([], [], [])
 
+
+
 -- Casos de Test Ejercicio 1
-redTest2 = ([usuario1], [], [])
-redTest3 = ([usuario1, usuario1, usuario2], [], [])
-redTest4 = ([usuario1, usuario2, usuario3], [], [])
-
--- Casos de Test Ejercicio 2
-redTest5 = ([usuario1, usuario2], [relacion1_2], [])
-redTest6 = ([usuario1, usuario2], [relacion1_2, relacion1_2], [])
-
--- Casos de Test Ejercicio 3
-redTest7 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion1_3, relacion1_4], [])
-
--- Casos de Test Ejercicio 4
-redTest8 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion3_4, relacion2_3, relacion2_4], [])
-
--- Casos de Test Ejercicio 5
-redTest9 = ([usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10], [relacion1_2, relacion3_4, relacion2_3, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4], [])
-
-
-run = runTestTT testSuiteEjercicio5
+redTest1_1 = redVacia
+redTest1_2 = ([usuario1], [], [])
+redTest1_3 = ([usuario1, usuario2, usuario5], [], [])
+redTest1_4 = ([usuario1, usuario2, usuario3], [], [])
 
 -- Ejercicio 1
 testSuiteEjercicio1 = test [
-    "Caso 1: Red vacía" ~: (nombresDeUsuarios redVacia) ~?= [],
+    "Caso 1: Red vacía" ~: (nombresDeUsuarios redTest1_1) ~?= [],
 
     "Caso 2: Red con un usuario" ~: (nombresDeUsuarios redTest2) ~?= ["Juan"],
 
-    "Caso 3: Red con nombres de usuarios repetidos" ~: (nombresDeUsuarios redTest3) ~?= ["Juan", "Maria"],
+    "Caso 3: Red con nombres de usuarios repetidos" ~: (nombresDeUsuarios redTest3) ~?= ["Juan", "Natalia"],
 
-    "Caso 4: Red con nombres de usuarios que no se repiten" ~: (nombresDeUsuarios redTest4) ~?= ["Juan", "Julia", "Maria"]
+    "Caso 4: Red con nombres de usuarios que no se repiten" ~: (nombresDeUsuarios redTest4) ~?= ["Juan", "Natalia", "Pedro"]
         ]
+
+
+-- Casos de Test Ejercicio 2
+redTest2_1 = ([usuario1],[],[])
+redTest2_2 = ([usuario1, usuario2, usuario3], [relacion2_3], [])
+redTest2_3 = ([usuario1, usuario2, usuario3],[],[])
+redTest2_4 = ([usuario1, usuario2, usuario3],[relacion1_2], [])
+redTest2_5 = ([usuario1, usuario2, usuario3],[relacion1_2, relacion1_3], [])
 
 -- Ejercicio 2
 testSuiteEjercicio2 = test [
-    "Caso 1: Red vacía" ~: (amigosDe redVacia usuario1) ~?= [],
+    "Caso 1: Red con un usuario" ~: (amigosDe redTest2_1 usuario1) ~?= [],
 
-    "Caso 2: Red con un Usuario sin relaciones y ese usuario" ~: (amigosDe redTest2 usuario1) ~?= [],
+    "Caso 2: Red con varios usuarios y usuario sin relaciones" ~: (amigosDe redTest2_2 usuario1) ~?= [],
 
-    "Caso 3: Red con Usuarios con una relacion u1 u2 y u1 " ~: (amigosDe redTest5 usuario1) ~?= [usuario2],
+    "Caso 3: Red con varios usuarios y no hay relaciones" ~: (amigosDe redTest2_3 usuario1) ~?= [],
 
-    "Caso 4: Red con Usuarios con una relacion u1 u2 y u2 " ~: (amigosDe redTest5 usuario2) ~?= [usuario1],
+    "Caso 4: Red con varios usuarios y usuario con una relacion" ~: (amigosDe redTest2_4 usuario1) ~?= [usuario2],
 
-    "Caso 5: Red con Usuarios con una relacion repetida" ~: (amigosDe redTest6 usuario1) ~?= [usuario2]
+    "Caso 5: Red con varios usuarios y usuario con varias relaciones" ~: (amigosDe redTest2_5 usuario1) ~?= [usuario2, usuario3]
         ] 
+
+
+-- Casos de Test Ejercicio 3
+redTest3_1 = ([usuario1],[],[])
+redTest3_2 = ([usuario1, usuario2, usuario3], [relacion2_3], [])
+redTest3_3 = ([usuario1, usuario2, usuario3], [relacion1_2, relacion2_3], [])
+redTest3_4 = ([usuario1, usuario2, usuario3], [relacion1_2, relacion1_3, relacion2_3], [])
+
 
 -- Ejercicio 3
 testSuiteEjercicio3 = test [
-    "Caso 1: Red vacía" ~: (cantidadDeAmigos redVacia usuario1) ~?= 0,
+    "Caso 1: Red con un usuario" ~: (cantidadDeAmigos redTest3_1 usuario2) ~?= 0,
 
-    "Caso 2: Red con un usuario sin amigos" ~: (cantidadDeAmigos redTest2 usuario1) ~?= 0,
+    "Caso 2: Red con varios usuarios y usuario sin relaciones" ~: (cantidadDeAmigos redTest3_2 usuario1) ~?= 0,
 
-    "Caso 3: Red con un usuario con 1 amigo" ~: (cantidadDeAmigos redTest5 usuario1) ~?= 1,
+    "Caso 3: Red con varios usuarios y usuario con una relación" ~: (cantidadDeAmigos redTest3_3 usuario1) ~?= 1,
 
-    "Caso 4: Red con un usuario con 3 amigos" ~: (cantidadDeAmigos redTest7 usuario1) ~?= 3
+    "Caso 4: Red con varios usuarios y usuario con varias relaciones" ~: (cantidadDeAmigos redTest3_4 usuario1) ~?= 2
         ]
+
+
+-- Casos de Test Ejercicio 4
+redTest4_1 = ([usuario1], [], [])
+redTest4_2 = ([usuario1, usuario2], [relacion1_2], [])
+redTest4_3 = ([usuario1, usuario2, usuario3, usuario4], [relacion3_4, relacion1_3, relacion1_4, relacion2_3, relacion2_4], [])
+redTest4_4 = ([usuario1, usuario2, usuario3], [relacion1_2, relacion2_3, relacion2_4], [])
+
 
 -- Ejercicio 4
 testSuiteEjercicio4 = test [
-    "Caso 1: Usuario con 1 amigo" ~: (usuarioConMasAmigos redTest5) ~?= usuario1,
+    "Caso 1: Red con un usuario" ~: (usuarioConMasAmigos redTest4_1) ~?= usuario1,
 
-    "Caso 2: Muchos usuarios con varios amigos" ~: (usuarioConMasAmigos redTest8) ~?= usuario2
+    "Caso 2: Red con dos usuarios con una relación entre ambos" ~: (usuarioConMasAmigos redTest4_2) ~?= usuario1,
+
+    "Caso 3: Red con varios usuarios con misma cantidad máxima de amigos" ~: (usuarioConMasAmigos redTest4_3) ~?= usuario1,
+
+    "Caso 4: Red con varios usuarios y usuario con la cantidad máxima de amigos" ~: (usuarioConMasAmigos redTest4_4) ~?= usuario2
         ]
+
+
+-- Casos de Test Ejercicio 5
+redTest5_1 = redVacia
+redTest5_2 = ([usuario1, usuario2, usuario3], [], [])
+redTest5_3 = ([usuario1, usuario2, usuario3, usuario4, usuario5], [relacion1_2, relacion1_3, relacion1_4, relacion2_3, relacion3_4], [])
+redTest5_4 = ([usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11], [relacion1_2, relacion2_3], [])
+redTest5_5 = ([usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11, usuario12], [relacion1_2, relacion1_3, relacion1_4, relacion1_5, relacion1_6, relacion1_7, relacion1_8, relacion1_9, relacion1_10, relacion1_11, relacion1_12], [])
+redTest5_6 = ([usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11, usuario12], [relacion1_2, relacion1_3, relacion1_4, relacion1_5, relacion1_6, relacion1_7, relacion1_8, relacion1_9, relacion1_10, relacion1_11, relacion1_12, relacion2_3, relacion2_4, relacion2_5, relacion2_6, relacion2_7, relacion2_8, relacion2_9, relacion2_10, relacion2_11, relacion2_12], [])
 
 -- Ejercicio 5
 testSuiteEjercicio5 = test [
-    "Caso 1: Red vacía" ~: (estaRobertoCarlos redVacia) ~?= False,
--- Tendria que dar True
-    "Caso 2: Red vacía" ~: (estaRobertoCarlos redTest9) ~?= False
+    "Caso 1: Red vacía" ~: (estaRobertoCarlos redTest5_1) ~?= False,
+
+    "Caso 2: Red sin amistades" ~: (estaRobertoCarlos redTest5_2) ~?= False,
+
+    "Caso 3: Red con 10 o menos usuarios" ~: (estaRobertoCarlos redTest5_3) ~?= False,
+
+    "Caso 4: Red con mas de 10 usuarios y ninguno relacionado con mas de 10 usuarios" ~: (estaRobertoCarlos redTest5_4) ~?= False,
+
+    "Caso 5: Red con mas de 10 usuarios y uno relacionado con mas de 10 usuarios" ~: (estaRobertoCarlos redTest5_5) ~?= True,
+
+    "Caso 6: Red con mas de 10 usuarios y varios relacionados con mas de 10 usuarios" ~: (estaRobertoCarlos redTest5_6) ~?= True
         ]
 
 -- Ejercicio 6
