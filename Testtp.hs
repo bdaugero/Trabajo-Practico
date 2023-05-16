@@ -104,18 +104,18 @@ redVacia = ([], [], [])
 -- Casos de Test Ejercicio 1
 redTest1_1 = redVacia
 redTest1_2 = ([usuario1], [], [])
-redTest1_3 = ([usuario1, usuario2, usuario5], [], [])
+redTest1_3 = ([usuario1, usuario1, usuario5], [], [])
 redTest1_4 = ([usuario1, usuario2, usuario3], [], [])
 
 -- Ejercicio 1
 testSuiteEjercicio1 = test [
     "Caso 1: Red vacía" ~: (nombresDeUsuarios redTest1_1) ~?= [],
 
-    "Caso 2: Red con un usuario" ~: (nombresDeUsuarios redTest2) ~?= ["Juan"],
+    "Caso 2: Red con un usuario" ~: (nombresDeUsuarios redTest1_2) ~?= ["Juan"],
 
-    "Caso 3: Red con nombres de usuarios repetidos" ~: (nombresDeUsuarios redTest3) ~?= ["Juan", "Natalia"],
+    "Caso 3: Red con nombres de usuarios repetidos" ~: (nombresDeUsuarios redTest1_3) ~?= ["Juan", "Natalia"],
 
-    "Caso 4: Red con nombres de usuarios que no se repiten" ~: (nombresDeUsuarios redTest4) ~?= ["Juan", "Natalia", "Pedro"]
+    "Caso 4: Red con nombres de usuarios que no se repiten" ~: (nombresDeUsuarios redTest1_4) ~?= ["Juan", "Natalia", "Pedro"]
         ]
 
 
