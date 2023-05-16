@@ -69,8 +69,8 @@ de la red social.
 -}
 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe ([],[],[]) _ = []
 amigosDe red u = eliminarRepetidos (listaAmistades (relaciones red) u)
+-- elimine el caso red vacia, queda fuera del requiere --
 
 {-
 listaAmistades chequea si en la primera relación de la lista, el usuario ingresado es igual al usuario de la primera o
@@ -93,9 +93,8 @@ será igual a la longitud que tiene la lista de amigos del usuario (que es otra 
 -}
 
 cantidadDeAmigos :: RedSocial -> Usuario -> Integer
-cantidadDeAmigos ([],[],[]) _ = 0
 cantidadDeAmigos red u = largo (amigosDe red u)
-
+-- elimine el caso red vacia, queda fuera del requiere --
 
 -- Ejercicio 4
 
@@ -142,8 +141,8 @@ estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 -- Ejercicio 6
 -- PublicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe ([],[],[]) _ = []
 publicacionesDe red u = eliminarRepetidos (publicacionesDeAux (publicaciones red) u)
+-- elimine el caso red vacia, queda fuera del requiere --
 
 {-
 publicacionesDeAux va creando una lista con las publicaciones del usuario de entrada chequeando en cada publicación de la
@@ -160,8 +159,8 @@ publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeA
 -- Ejercicio 7
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA ([],[],[]) _ = []
 publicacionesQueLeGustanA red u = eliminarRepetidos (publicacionesQueLeGustanAaux (publicaciones red) u)
+-- elimine el caso red vacia, queda fuera del requiere --
 
 {-
 publicacionesQueLeGustanAaux se pregunta si el usuario ingresado es un elemento de la lista de likes de cada publicación 
@@ -178,15 +177,16 @@ publicacionesQueLeGustanAaux (p:ps) u |pertenece u (likesDePublicacion p) =  p :
 -- Ejercicio 8
 
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones ([],[],[]) _ _ = False
 lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
-
+-- elimine el caso red vacia, queda fuera del requiere --
 
 -- Ejercicio 9
 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel ([],[],[]) _ = False
-tieneUnSeguidorFiel red u = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
+tieneUnSeguidorFiel red u | publicaciones red == [] = False
+                          | otherwise = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
+-- elimine el caso red vacia, queda fuera del requiere y utilice guardas para contemplar falso el caso de las publicaciones vacias --
+
 
 tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
 tieneUnSeguidorFielAux [] ls = False
@@ -195,8 +195,10 @@ tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
 
 esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
 esSeguidorFiel u [] = True
-esSeguidorFiel u (l:ls) | pertenece u l = esSeguidorFiel u ls
+esSeguidorFiel u (l:ls) | l == [] = False
+                        | pertenece u (quitar u l) = esSeguidorFiel u ls
                         | otherwise = False
+-- este no contemplaba el caso en el que la publicacion no estaba likeada --
 
 -- Devuelve una lista de usuarios que likearon una publicacion
 listasDeLikesDeUsuario :: [Publicacion] -> [[Usuario]]
@@ -207,10 +209,9 @@ listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
 -- Ejercicio 10
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos ([],[],[]) _ _ = False
 existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
     where us = usuarios red
-
+-- elimine el caso red vacia, queda fuera del requiere --
 
 
 -- Predicados auxiliares
