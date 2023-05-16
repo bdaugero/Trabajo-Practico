@@ -162,7 +162,7 @@ testSuiteEjercicio3 = test [
 -- Casos de Test Ejercicio 4
 redTest4_1 = ([usuario1], [], [])
 redTest4_2 = ([usuario1, usuario2], [relacion1_2], [])
-redTest4_3 = ([usuario1, usuario2, usuario3, usuario4], [relacion3_4, relacion1_3, relacion1_4, relacion2_3, relacion2_4], [])
+redTest4_3 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion3_4], [])
 redTest4_4 = ([usuario1, usuario2, usuario3], [relacion1_2, relacion2_3, relacion2_4], [])
 
 
