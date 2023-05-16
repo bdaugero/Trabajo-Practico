@@ -138,16 +138,12 @@ estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 
 -- Ejercicio 6
--- PublicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
+-- publicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = eliminarRepetidos (publicacionesDeAux (publicaciones red) u)
 
-{-
-publicacionesDeAux va creando una lista con las publicaciones del usuario de entrada chequeando en cada publicación de la
-lista si ese usuario es igual al usuario de la publicación (en cuyo caso, el la publicó). Si no lo es, no la agrega y 
-continúa con el siguiente. 
--}
 
+-- publicacionesDeAux toma una lista de publicaciones, un usuario y devuelve una lista de publicaciones del mismo
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
 publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeAux ps u 
