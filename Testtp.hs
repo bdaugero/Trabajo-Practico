@@ -85,7 +85,7 @@ redTest7 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion1_3,
 redTest8 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion3_4, relacion2_3, relacion2_4], [])
 
 -- Casos de Test Ejercicio 5
-redTest9 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion3_4, relacion2_3, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4], [])
+redTest9 = ([usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10], [relacion1_2, relacion3_4, relacion2_3, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4, relacion2_4], [])
 
 
 run = runTestTT testSuiteEjercicio5
