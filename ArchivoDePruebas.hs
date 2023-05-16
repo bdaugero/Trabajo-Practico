@@ -209,9 +209,25 @@ listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
 -- Ejercicio 10
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
+existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && ordenados us u1 u2 && cadenaDeAmigos (usuariosEntre us u1 u2) red
     where us = usuarios red
 -- elimine el caso red vacia, queda fuera del requiere --
+
+ordenados :: [Usuario] -> Usuario -> Usuario -> Bool
+ordenados (u:us) u1 u2 | u1 == u = True
+                       | u2 == u = False
+                       | otherwise = ordenados us u1 u2
+
+usuariosEntre :: [Usuario] -> Usuario -> Usuario -> [Usuario]
+usuariosEntre us u1 u2 = quitarDesde u2 (quitarHasta u1 us)
+
+quitarHasta :: Usuario -> [Usuario] -> [Usuario]
+quitarHasta u1 (u:us) | u1 == u = u:us
+                      | otherwise = quitarHasta u1 us
+
+quitarDesde :: Usuario -> [Usuario] -> [Usuario]
+quitarDesde u2 us | ultimo us == u2 = us
+                  | otherwise = quitarDesde u2 (quitar (ultimo us) us)
 
 
 -- Predicados auxiliares
