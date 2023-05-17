@@ -1,7 +1,7 @@
 module Testtp where
 
 import Test.HUnit
-import ArchivoDePruebas
+import Solucion
 
 run1 = runTestTT testSuiteEjercicio1
 run2 = runTestTT testSuiteEjercicio2
@@ -100,8 +100,6 @@ publicacion10_3 = (usuario10, "Estoy tan emocionado por la boda de mi mejor amig
 
 -- Redes
 redVacia = ([], [], [])
-
-
 
 -- Casos de Test Ejercicio 1
 redTest1_1 = redVacia
