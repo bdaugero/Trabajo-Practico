@@ -2,9 +2,9 @@ module Solucion where
 
 -- Nombre de Grupo: Algorritmo
 -- Integrante 1: Bautista D'Augero, bdaugero@gmail.com, 100/21
--- Integrante 2: Nombre Apellido, email, LU
--- Integrante 3: Nombre Apellido, email, LU
--- Integrante 4: Nombre Apellido, email, LU
+-- Integrante 2: Tomas Pereyra Lamas, tomaspereyralamas@gmail.com, 346/23
+-- Integrante 3: Sergio D' Jesus Aguilera Torres, sergiodjesus1418@gmail.com, 907/23
+-- Integrante 4: Antonella Apellido, email, LU
 
 --Definiciones de tipos
 type Usuario = (Integer, String) -- (id, nombre)
@@ -204,18 +204,18 @@ quitarDesde u2 us | ultimo us == u2 = us
 
 -- Predicados auxiliares
 
--- Devuelve el entero mayor de una lista
+-- Devuelve el mayor entero de una lista.
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
               | x >= head xs = maximo (x : tail xs)
               | x < head xs = maximo xs
 
--- Elimina todos los elementos que se repiten en una lista conservando una unica aparicion
+-- Elimina todos los elementos que se repiten en una lista conservando una unica aparicion de ese elemento.
 eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
 eliminarRepetidos (x:xs) = x : eliminarRepetidos (quitarTodos x xs)
 
--- Elimina todas las apariciones de un elemento de la lista
+-- Elimina todas las apariciones de un elemento de la lista.
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos _ [] = []
 quitarTodos x ls | quitar x ls == ls = ls
@@ -242,7 +242,7 @@ listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
 listaPerteneceLista [] ls = True
 listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
 
--- Verifica que cada usuario de la lista esta relacionadosDirecto con el siguiente de la misma. 
+-- Verifica que cada usuario de la lista este relacionadosDirecto con el siguiente de la misma. 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (a:b:[]) red = relacionadosDirecto a b red  
 cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos us red
