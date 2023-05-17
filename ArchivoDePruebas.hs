@@ -36,7 +36,6 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 
-
 -- Ejercicio 1
 
 {-
@@ -51,31 +50,25 @@ nombresDeUsuarios red = proyectarNombres (usuarios red)
 proyectarNombres :: [Usuario] -> [String]
 proyectarNombres us = eliminarRepetidos (soloNombresUsuarios us)
 
-{-
-soloNombresUsuarios va tomando la segunda coordenada de cada primer elemento de la lista de usuarios, es decir
-el nombre, haciendo recursión con el resto de la lista hasta llegar al último usuario y así obtener la lista de nombres
-(admite repetidos).
--}
+-- soloNombresUsuarios toma una lista de usuarios y devuelve una lista con los nombres de esos usuarios (admite repetidos).
 
 soloNombresUsuarios :: [Usuario] -> [String]
 soloNombresUsuarios [u] = [snd u]
 soloNombresUsuarios (u:us) = snd u : soloNombresUsuarios us
 
+
 -- Ejercicio 2
 
-{-
-amigosDe toma como función auxiliar listaAmistades, a la cual se le pasa como primer parámetro la lista de relaciones
-de la red social.
--}
+-- amigosDe llama a la función auxiliar listaAmistades, evaluándola en la lista de relaciones de la red social.
 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe red u = eliminarRepetidos (listaAmistades (relaciones red) u)
--- elimine el caso red vacia, queda fuera del requiere --
+--creo que hay que sacar eliminarRepetidos porque una red valida tiene relaciones validas y relaciones validas no admite
+--relaciones repetidas.
 
 {-
-listaAmistades chequea si en la primera relación de la lista, el usuario ingresado es igual al usuario de la primera o
-segunda tupla de la relación (en cuyo caso, son amigos) y agrega el segundo o el primer usuario respectivamente, luego
-recursa sobre el tail hasta llegar a la lista vacía.
+listaAmistades dada una lista de relaciones y un usuario, devuelve una lista con los amigos del usuario buscándolos en
+cada relación de la lista.
 -}
 
 listaAmistades :: [Relacion] -> Usuario -> [Usuario]
@@ -87,27 +80,22 @@ listaAmistades (r:rs) u | fst r == u = snd r : listaAmistades rs u
 
 -- Ejercicio 3
 
-{-
-cantidadDeAmigos dada una red y un usuario, devuelve la cantidad de amigos de dicho usuario entendiendo que dicha cantidad
-será igual a la longitud que tiene la lista de amigos del usuario (que es otra forma de contarlos).
--}
+-- cantidadDeAmigos dado un usuario y una red, devuelve la cantidad de elementos de la lista de amigos del usuario.
 
 cantidadDeAmigos :: RedSocial -> Usuario -> Integer
 cantidadDeAmigos red u = largo (amigosDe red u)
--- elimine el caso red vacia, queda fuera del requiere --
+
 
 -- Ejercicio 4
 
-{-
-usuarioConMasAmigos es la evaluación de usuarioConMasAmigosAux en la lista de usuarios de la red.
--}
+-- usuarioConMasAmigos es la evaluación de usuarioConMasAmigosAux en la lista de usuarios de la red.
 
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red = usuarioConMasAmigosAux red (usuarios red)
 
 {-
 usuarioConMasAmigosAux va recorriendo la lista de usuarios de la red hasta encontrar un usuario que coincide con la cantidad
-de amigos máxima de la red.
+máxima de amigos de la red.
 -}
 
 usuarioConMasAmigosAux :: RedSocial -> [Usuario] -> Usuario
@@ -115,13 +103,15 @@ usuarioConMasAmigosAux red [u] = u
 usuarioConMasAmigosAux red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigos red u = u
                              | otherwise = usuarioConMasAmigosAux red us
 
+-- mayorCantidadDeAmigos dada una red social devuelve la cantidad máxima de usuarios que existe en la red.
 
 mayorCantidadDeAmigos :: RedSocial -> Integer
 mayorCantidadDeAmigos red = maximo (cantidadesDeAmigos red (usuarios red))
 
-
---cantidadesDeAmigos va creando una lista con la cantidad de amigos que tiene cada usuario de la lista de usuarios.
-
+{-
+cantidadesDeAmigos dada una red social y una lista de usuarios de la red, devuelve una lista con la cantidad de amigos
+que tiene cada usuario.
+-}
 
 cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
 cantidadesDeAmigos red [] = []
@@ -130,20 +120,24 @@ cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red 
 
 -- Ejercicio 5
 
+-- estaRobertoCarlos chequea si existe algún usuario de la red que tenga más de 10 amigos. 
 
---estaRobertoCarlos chequea si existe algún usuario de la red que tenga más de 10 amigos. 
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos ([],[],[]) = False
 estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 
 -- Ejercicio 6
--- publicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
+
+-- publicacionesDe evalúa publicacionesDeAux en las publicaciones de la red y elimina las repetidas.
+
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = eliminarRepetidos (publicacionesDeAux (publicaciones red) u)
+--acá tambien deberíamos sacar eliminarRepetidos porque la función requiere una red válida y una red válida no contiene
+--publicaciones repetidas. 
 
+-- publicacionesDeAux toma una lista de publicaciones, un usuario y devuelve una lista con las publicaciones del mismo.
 
--- publicacionesDeAux toma una lista de publicaciones, un usuario y devuelve una lista de publicaciones del mismo
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
 publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeAux ps u 
@@ -152,13 +146,15 @@ publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeA
 
 -- Ejercicio 7
 
+-- publicacionesQueLeGustanA es la evaluación de publicacionesQueLeGustanAaux en la lista de publicaciones de la red.
+
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = eliminarRepetidos (publicacionesQueLeGustanAaux (publicaciones red) u)
+--acá lo mismo con eliminarRepetidos
 
 {-
-publicacionesQueLeGustanAaux se pregunta si el usuario ingresado es un elemento de la lista de likes de cada publicación 
-de la lista, si lo es agrega la publicación a una lista y sigue con el resto. Si no lo es, entonces no es una publicación
-que le guste (por lo tanto no la agrega) y se pregunta por el siguiente.  
+publicacionesQueLeGustanAaux dada una lista de publicaciones y un usuario, devuelve una lista con las publicaciones que le
+gustaron a ese usuario. 
 -}
 
 publicacionesQueLeGustanAaux :: [Publicacion] -> Usuario -> [Publicacion]
@@ -169,8 +165,14 @@ publicacionesQueLeGustanAaux (p:ps) u |pertenece u (likesDePublicacion p) =  p :
 
 -- Ejercicio 8
 
+{-
+lesGustanLasMismasPublicaciones dada una red social y dos usuarios devuelve un booleano que indica si a esos usuarios les 
+gustan las mismas publicaciones llamando a la función publicacionesQueLeGustanA y mismosElementos.
+-}
+
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
+
 
 -- Ejercicio 9
 
@@ -183,6 +185,7 @@ tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
 tieneUnSeguidorFielAux [] ls = False
 tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
                                  | otherwise = tieneUnSeguidorFielAux us ls
+
 
 esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
 esSeguidorFiel u [] = True
@@ -201,7 +204,8 @@ listasDeLikesDeUsuario (p:ps) u | pertenece u (likesDePublicacion p) = quitar u 
 -- Ejercicio 10
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && ordenados us u1 u2 && cadenaDeAmigos (usuariosEntre us u1 u2) red
+existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && ordenados us u1 u2 && cadenaDe
+Amigos (usuariosEntre us u1 u2) red
     where us = usuarios red
 
 
