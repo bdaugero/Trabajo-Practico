@@ -1,7 +1,11 @@
-module Testtp where
+module Test where
 
 import Test.HUnit
 import Solucion
+
+main = runTestTT todosLosTests
+
+todosLosTests = test [testSuiteEjercicio1, testSuiteEjercicio2, testSuiteEjercicio3, testSuiteEjercicio4, testSuiteEjercicio5, testSuiteEjercicio6, testSuiteEjercicio7, testSuiteEjercicio8, testSuiteEjercicio9, testSuiteEjercicio10]
 
 run1 = runTestTT testSuiteEjercicio1
 run2 = runTestTT testSuiteEjercicio2
