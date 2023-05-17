@@ -119,9 +119,9 @@ usuarioConMasAmigosAux red (u:us) | mayorCantidadDeAmigos red == cantidadDeAmigo
 mayorCantidadDeAmigos :: RedSocial -> Integer
 mayorCantidadDeAmigos red = maximo (cantidadesDeAmigos red (usuarios red))
 
-{-
-cantidadesDeAmigos va creando una lista con la cantidad de amigos que tiene cada usuario de la lista de usuarios.
--}
+
+--cantidadesDeAmigos va creando una lista con la cantidad de amigos que tiene cada usuario de la lista de usuarios.
+
 
 cantidadesDeAmigos :: RedSocial -> [Usuario] -> [Integer]
 cantidadesDeAmigos red [] = []
@@ -132,24 +132,18 @@ cantidadesDeAmigos red (u:us) = cantidadDeAmigos red u : cantidadesDeAmigos red 
 
 
 --estaRobertoCarlos chequea si existe algún usuario de la red que tenga más de 10 amigos. 
--- esta andando mal roberto carlos
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos ([],[],[]) = False
 estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 
 
 -- Ejercicio 6
--- PublicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
+-- publicacionesDe toma una Red Social un Usuario y vuelve las publicaciones del mismo.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = eliminarRepetidos (publicacionesDeAux (publicaciones red) u)
--- elimine el caso red vacia, queda fuera del requiere --
 
-{-
-publicacionesDeAux va creando una lista con las publicaciones del usuario de entrada chequeando en cada publicación de la
-lista si ese usuario es igual al usuario de la publicación (en cuyo caso, el la publicó). Si no lo es, no la agrega y 
-continúa con el siguiente. 
--}
 
+-- publicacionesDeAux toma una lista de publicaciones, un usuario y devuelve una lista de publicaciones del mismo
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
 publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeAux ps u 
@@ -160,7 +154,6 @@ publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeA
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = eliminarRepetidos (publicacionesQueLeGustanAaux (publicaciones red) u)
--- elimine el caso red vacia, queda fuera del requiere --
 
 {-
 publicacionesQueLeGustanAaux se pregunta si el usuario ingresado es un elemento de la lista de likes de cada publicación 
@@ -178,14 +171,12 @@ publicacionesQueLeGustanAaux (p:ps) u |pertenece u (likesDePublicacion p) =  p :
 
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 = mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
--- elimine el caso red vacia, queda fuera del requiere --
 
 -- Ejercicio 9
 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red u | publicaciones red == [] = False
-                          | otherwise = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u))
--- elimine el caso red vacia, queda fuera del requiere y utilice guardas para contemplar falso el caso de las publicaciones vacias --
+tieneUnSeguidorFiel red u | publicacionesDe red u == [] = False
+                          | otherwise = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u) u)
 
 
 tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
@@ -196,27 +187,44 @@ tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
 esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
 esSeguidorFiel u [] = True
 esSeguidorFiel u (l:ls) | l == [] = False
-                        | pertenece u (quitar u l) = esSeguidorFiel u ls
+                        | pertenece u l = esSeguidorFiel u ls
                         | otherwise = False
--- este no contemplaba el caso en el que la publicacion no estaba likeada --
+
 
 -- Devuelve una lista de usuarios que likearon una publicacion
-listasDeLikesDeUsuario :: [Publicacion] -> [[Usuario]]
-listasDeLikesDeUsuario [] = []
-listasDeLikesDeUsuario (p:ps) = likesDePublicacion p : listasDeLikesDeUsuario ps
+listasDeLikesDeUsuario :: [Publicacion] -> Usuario -> [[Usuario]]
+listasDeLikesDeUsuario [] _ = []
+listasDeLikesDeUsuario (p:ps) u | pertenece u (likesDePublicacion p) = quitar u (likesDePublicacion p) : listasDeLikesDeUsuario ps u
+                                | otherwise = (likesDePublicacion p) : listasDeLikesDeUsuario ps u
 
 
 -- Ejercicio 10
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && empiezaCon u1 us && terminaCon u2 us && cadenaDeAmigos us red
+existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && ordenados us u1 u2 && cadenaDeAmigos (usuariosEntre us u1 u2) red
     where us = usuarios red
--- elimine el caso red vacia, queda fuera del requiere --
+
+
+ordenados :: [Usuario] -> Usuario -> Usuario -> Bool
+ordenados (u:us) u1 u2 | u1 == u = True
+                       | u2 == u = False
+                       | otherwise = ordenados us u1 u2
+
+usuariosEntre :: [Usuario] -> Usuario -> Usuario -> [Usuario]
+usuariosEntre us u1 u2 = quitarDesde u2 (quitarHasta u1 us)
+
+quitarHasta :: Usuario -> [Usuario] -> [Usuario]
+quitarHasta u1 (u:us) | u1 == u = u:us
+                      | otherwise = quitarHasta u1 us
+
+quitarDesde :: Usuario -> [Usuario] -> [Usuario]
+quitarDesde u2 us | ultimo us == u2 = us
+                  | otherwise = quitarDesde u2 (quitar (ultimo us) us)
 
 
 -- Predicados auxiliares
 
--- Devuelve el entero mas alto de una lista
+-- Devuelve el entero mas grande de una lista
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
               | x >= head xs = maximo (x : tail xs)
