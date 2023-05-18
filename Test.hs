@@ -212,8 +212,9 @@ testSuiteEjercicio5 = test [
 redTest6_1 = ([usuario6], [], [])
 redTest6_2 = ([usuario6, usuario7, usuario8], [], [publicacion6_2])
 redTest6_3 = ([usuario6, usuario7, usuario8], [], [publicacion6_2])
-redTest6_4 = ([usuario6, usuario7, usuario8], [], [publicacion6_1, publicacion6_2, publicacion8_1])
-redTest6_5 = ([usuario6, usuario7, usuario8], [], [publicacion6_2, publicacion6_2, publicacion8_1])
+redTest6_4 = ([usuario1, usuario3, usuario6, usuario7, usuario8], [], [publicacion6_1, publicacion6_2, publicacion8_1])
+redTest6_5 = ([usuario6, usuario7, usuario8], [], [publicacion6_2, publicacion8_3, publicacion8_1])
+redTest6_6 = ([usuario6, usuario7, usuario8], [], [publicacion6_2, publicacion8_1, publicacion7_4])
 
 testSuiteEjercicio6 = test [
 
@@ -227,7 +228,7 @@ testSuiteEjercicio6 = test [
 
     "Caso 5:Red con varias publicaciones y ninguna del usuario" ~: (publicacionesDe redTest6_5 usuario7) ~?= [],
     
-    "Caso 6:Red con varias publicaciones y una sola del usuario" ~: (publicacionesDe redTest6_5 usuario8) ~?= [publicacion8_1]   
+    "Caso 6:Red con varias publicaciones y una sola del usuario" ~: (publicacionesDe redTest6_6 usuario8) ~?= [publicacion8_1]   
         ]
 
 --Casos Test Ejercico 7
@@ -236,7 +237,7 @@ redTest7_2 = ([usuario7, usuario8, usuario9], [], [publicacion8_1])
 redTest7_3 = ([usuario7, usuario8, usuario9], [], [publicacion9_2])
 redTest7_4 = ([usuario6, usuario7, usuario8], [], [publicacion6_2, publicacion7_4, publicacion8_1])
 redTest7_5 = ([usuario6, usuario7, usuario8], [], [publicacion6_2, publicacion7_4, publicacion8_1, publicacion8_3])
-redTest7_6 = ([usuario6, usuario7, usuario8], [], [publicacion7_2, publicacion8_1, publicacion8_3])
+redTest7_6 = ([usuario6, usuario7, usuario8], [], [publicacion8_1, publicacion8_3])
 
 
 testSuiteEjercicio7 = test [
@@ -258,12 +259,12 @@ testSuiteEjercicio7 = test [
 --Casos Test Ejercico 8
 redTest8_1 = ([usuario7, usuario8], [], [])
 redTest8_2 = ([usuario7, usuario1, usuario3], [], [publicacion7_1])
-redTest8_3 = (([usuario7, usuario8], [], [publicacion7_4]))
-redTest8_4 = (([usuario7, usuario9, usuario10], [], [publicacion7_2]))
+redTest8_3 = ([usuario7, usuario8], [], [publicacion7_4])
+redTest8_4 = ([usuario7, usuario9, usuario10], [], [publicacion7_2])
 redTest8_5 = ([usuario9, usuario8], [], [publicacion9_2])
 redTest8_6 = ([usuario9, usuario6], [], [publicacion6_2, publicacion9_2, publicacion9_3])
-redTest8_7 = (([usuario7, usuario9, usuario10], [], [publicacion7_2, publicacion9_2, publicacion10_2]))
-redTest8_8 = (([usuario7, usuario8, usuario9, usuario10], [], [publicacion9_2, publicacion10_2, publicacion10_1, publicacion7_3]))
+redTest8_7 = ([usuario7, usuario9, usuario10], [], [publicacion7_2, publicacion9_2, publicacion10_2])
+redTest8_8 = ([usuario7, usuario8, usuario9, usuario10], [], [publicacion9_2, publicacion10_2, publicacion10_1, publicacion7_3])
 
 testSuiteEjercicio8 = test [
 
@@ -286,7 +287,7 @@ testSuiteEjercicio8 = test [
 
 
 --Casos Test Ejercico 9
-redTest9_1 = ([usuario1, usuario2], [], [publicacion2_1])
+redTest9_1 = ([usuario1, usuario2, usuario4], [], [publicacion2_1])
 redTest9_2 = ([usuario1, usuario2], [], [publicacion1_4])
 redTest9_3 = ([usuario1, usuario2, usuario4], [], [publicacion1_1])
 redTest9_4 = ([usuario1], [], [publicacion1_6, publicacion1_4])
