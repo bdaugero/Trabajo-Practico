@@ -208,7 +208,7 @@ quitarDesde u2 us | ultimo us == u2 = us
 
 -- Predicados auxiliares
 
--- Devuelve el mayor entero de una lista.
+
 maximo :: [Integer] -> Integer
 maximo (x:xs) | xs == [] = x
               | x >= head xs = maximo (x : tail xs)
@@ -231,7 +231,7 @@ quitar n (x:xs) | not (pertenece n (x:xs)) = (x:xs)
                 | n == x = xs
                 | otherwise = x : quitar n xs
 
--- Devuelve true si el elemento pertenece a la lista.
+
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
 pertenece n (x:xs) | n == x = True
@@ -260,13 +260,11 @@ relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 red = pertenece (u1, u2) (relaciones red) || pertenece (u2, u1) (relaciones red)
 
 
--- Devuelve el ultimo elemento de una lista.
 ultimo :: [t] -> t
 ultimo [a] = a
 ultimo (x:xs) = ultimo xs
 
 
--- Devuelve la cantidad de elementos de una lista.
 largo :: (Eq t) => [t] -> Integer
 largo [] = 0
 largo (x:xs) = largo xs + 1
