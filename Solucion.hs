@@ -4,7 +4,7 @@ module Solucion where
 -- Integrante 1: Bautista D'Augero, bdaugero@gmail.com, 100/21
 -- Integrante 2: Tomas Pereyra Lamas, tomaspereyralamas@gmail.com, 346/23
 -- Integrante 3: Sergio D' Jesus Aguilera Torres, sergiodjesus1418@gmail.com, 907/23
--- Integrante 4: Antonella Apellido, email, LU
+-- Integrante 4: Antonella Galizia, galiziaantonella99@gmail.com , 515/20
 
 --Definiciones de tipos
 type Usuario = (Integer, String) -- (id, nombre)
