@@ -114,6 +114,7 @@ estaRobertoCarlos red = (mayorCantidadDeAmigos red) > 10
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = publicacionesDeAux (publicaciones red) u
 
+
 -- Toma una lista de publicaciones, un usuario y devuelve una lista con las publicaciones del mismo.
 publicacionesDeAux :: [Publicacion] -> Usuario -> [Publicacion]
 publicacionesDeAux [] u = []
@@ -126,7 +127,6 @@ publicacionesDeAux (p:ps) u | u == usuarioDePublicacion p = p : publicacionesDeA
 -- Es la evaluación de publicacionesQueLeGustanAaux en la lista de publicaciones de la red.
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = publicacionesQueLeGustanAaux (publicaciones red) u
-
 
 
 -- Dada una lista de publicaciones y un usuario, devuelve una lista con las publicaciones que le gustaron a ese usuario. 
@@ -151,11 +151,13 @@ tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u | publicacionesDe red u == [] = False
                           | otherwise = tieneUnSeguidorFielAux (usuarios red) (listasDeLikesDeUsuario (publicacionesDe red u) u)
 
+
 -- Toma los usuarios de la red y la lista de likes de las publicaciones de un usuario y verifica si un usuario de la red esSeguidorFiel del usuario.
 tieneUnSeguidorFielAux :: [Usuario] -> [[Usuario]] -> Bool
 tieneUnSeguidorFielAux [] ls = False
 tieneUnSeguidorFielAux (u:us) ls | esSeguidorFiel u ls = True
                                  | otherwise = tieneUnSeguidorFielAux us ls
+
 
 -- Veirifica que un usuario pertenezca a todos los likes de las publicaciones de un usuario. 
 esSeguidorFiel :: Usuario -> [[Usuario]] -> Bool
@@ -179,11 +181,13 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = u1 /= u2 && ordenados us u1 u2 && cadenaDeAmigos (usuariosEntre us u1 u2) red
     where us = usuarios red
 
+
 -- Dados una lista de usuarios y dos usuarios verifica que esten en la lista en el orden ingresado (no importa si hay usuarios entre ellos). 
 ordenados :: [Usuario] -> Usuario -> Usuario -> Bool
 ordenados (u:us) u1 u2 | u1 == u = True
                        | u2 == u = False
                        | otherwise = ordenados us u1 u2
+
 
 -- Dados una lista de usuarios y dos usuarios de la lista devuelve una lista que empieza con el primero ingresado, termina con el segundo ingresado y conserva los usuarios que habia entre ellos en la lista original.
 usuariosEntre :: [Usuario] -> Usuario -> Usuario -> [Usuario]
@@ -237,10 +241,12 @@ pertenece n (x:xs) | n == x = True
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool
 mismosElementos ls1 ls2 = (largo ls1 == largo ls2) && listaPerteneceLista ls1 ls2 && listaPerteneceLista ls2 ls1
 
+
 -- Verifica si los elementos de la primer lista pertenecen a la segunda.
 listaPerteneceLista :: (Eq t) => [t] -> [t] -> Bool
 listaPerteneceLista [] ls = True
 listaPerteneceLista (x:xs) ls = (pertenece x ls) && listaPerteneceLista xs ls
+
 
 -- Verifica que cada usuario de la lista este relacionadosDirecto con el siguiente de la misma. 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
@@ -248,14 +254,17 @@ cadenaDeAmigos (a:b:[]) red = relacionadosDirecto a b red
 cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos us red
                           | otherwise = False
 
+
 -- Verifica que haya una relacion entre los dos usuarios en la red.
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 red = pertenece (u1, u2) (relaciones red) || pertenece (u2, u1) (relaciones red)
+
 
 -- Devuelve el ultimo elemento de una lista.
 ultimo :: [t] -> t
 ultimo [a] = a
 ultimo (x:xs) = ultimo xs
+
 
 -- Devuelve la cantidad de elementos de una lista.
 largo :: (Eq t) => [t] -> Integer
